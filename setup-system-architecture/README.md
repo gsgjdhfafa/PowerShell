@@ -1,0 +1,34 @@
+# System Architecture Setup
+
+Zero-friction Cloud-first Setup.
+Reihenfolge strikt einhalten.
+
+## Flow
+
+```
+Telegram -> VPS (Node.js Bot) -> KI (OpenAI/Claude) -> Notion -> Telegram
+```
+
+## Struktur
+
+```
+01-pc/           Windows + Brave Konfiguration (lokal, 1x)
+02-server/       Ubuntu VPS Base + Docker + Node + Firewall
+03-bot/          Telegram Bot (Node.js, dockerized)
+04-integration/  OpenAI + Claude + Notion Module
+```
+
+## Reihenfolge
+
+1. `01-pc/brave-setup.ps1`     (Windows, als Admin)
+2. `02-server/01-base.sh`      (VPS als root)
+3. `02-server/02-docker.sh`    (VPS als root)
+4. `02-server/03-hardening.sh` (VPS als root)
+5. `03-bot/deploy.sh`          (VPS als root, nach Secrets in `.env`)
+
+Alle Scripts sind idempotent: mehrfach ausfuehrbar, Ergebnis gleich.
+
+## Secrets
+
+Nie committen. Werden nur lokal in `03-bot/.env` gesetzt.
+Vorlage: `03-bot/.env.example`.
