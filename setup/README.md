@@ -18,7 +18,8 @@ Jeder Schritt ist idempotent. Mehrfach ausfuehrbar. Keine GUI.
 ```
 powershell -ExecutionPolicy Bypass -File setup/1-pc/setup-brave.ps1
 powershell -ExecutionPolicy Bypass -File setup/1-pc/style-windows.ps1
-# Optional:
+powershell -ExecutionPolicy Bypass -File setup/1-pc/links-newtab.ps1
+# style-windows Optionen:
 #   -Mode Light
 #   -AccentHex '#7B61FF'
 #   -Wallpaper 'C:\Users\<du>\Pictures\wall.jpg'
