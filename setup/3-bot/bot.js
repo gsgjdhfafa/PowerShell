@@ -124,9 +124,13 @@ async function saveTask(o) {
     });
 }
 async function saveCost(o) {
+    const amount = Number(o.amount);
+    if (!Number.isFinite(amount)) {
+        throw new Error('cost: amount fehlt oder ist keine Zahl. /cost mit Betrag wiederholen.');
+    }
     return notionCreate(DB.cost, {
         Name:     T.title(o.title),
-        Amount:   T.num(o.amount),
+        Amount:   { number: amount },
         Currency: T.sel(o.currency),
         Category: T.sel(o.category),
         Notes:    T.rich(o.notes),
