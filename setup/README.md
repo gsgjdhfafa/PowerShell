@@ -46,3 +46,18 @@ Bot updaten (spaeter):
 ```
 APP_USER=ops BRANCH=main bash setup/2-server/update.sh
 ```
+
+Health-Check:
+```
+APP_USER=ops bash setup/2-server/doctor.sh
+```
+
+## Bot Commands
+
+```
+/task <text>   Aufgabe -> Notion: Tasks
+/note <text>   Notiz   -> Notion: Memory
+/cost <text>   Ausgabe -> Notion: Costs
+/status        Bot-Health (uptime, AI provider, Notion-Ping)
+/help          Command-Liste
+```

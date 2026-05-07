@@ -161,8 +161,55 @@ bot.onText(/^\/task(?:\s+([\s\S]+))?$/, (m, x) => handle(m, 'task', (x[1] || '')
 bot.onText(/^\/note(?:\s+([\s\S]+))?$/, (m, x) => handle(m, 'note', (x[1] || '').trim()));
 bot.onText(/^\/cost(?:\s+([\s\S]+))?$/, (m, x) => handle(m, 'cost', (x[1] || '').trim()));
 
-bot.onText(/^\/start$/, m =>
-    bot.sendMessage(m.chat.id, 'zero-friction bot bereit.\n/task <text>\n/note <text>\n/cost <text>'));
+const HELP = [
+    'commands:',
+    '  /task <text>  -> Aufgabe (Notion: Tasks)',
+    '  /note <text>  -> Notiz   (Notion: Memory)',
+    '  /cost <text>  -> Ausgabe (Notion: Costs)',
+    '  /status       -> Bot-Health',
+    '  /help         -> diese Liste',
+].join('\n');
+
+bot.onText(/^\/start$/, m => bot.sendMessage(m.chat.id, `zero-friction bot bereit.\n\n${HELP}`));
+bot.onText(/^\/help$/,  m => bot.sendMessage(m.chat.id, HELP));
+
+const START = Date.now();
+function fmtUptime(ms) {
+    const s = Math.floor(ms / 1000);
+    const d = Math.floor(s / 86400);
+    const h = Math.floor((s % 86400) / 3600);
+    const m = Math.floor((s % 3600) / 60);
+    return `${d}d ${h}h ${m}m`;
+}
+
+async function notionPing() {
+    try {
+        const { statusCode } = await request('https://api.notion.com/v1/users/me', {
+            method: 'GET',
+            headers: {
+                'authorization': `Bearer ${NOTION_TOKEN}`,
+                'notion-version': '2022-06-28',
+            },
+        });
+        return statusCode === 200 ? 'ok' : `http ${statusCode}`;
+    } catch (e) {
+        return `fail (${e.message})`;
+    }
+}
+
+bot.onText(/^\/status$/, async msg => {
+    const chatId = msg.chat.id;
+    if (!isAllowed(msg.from.id)) return bot.sendMessage(chatId, 'nicht autorisiert.');
+    const notion = await notionPing();
+    const lines = [
+        `uptime  : ${fmtUptime(Date.now() - START)}`,
+        `provider: ${PROVIDER} (${PROVIDER === 'openai' ? OPENAI_MODEL : CLAUDE_MODEL})`,
+        `notion  : ${notion}`,
+        `allowed : ${ALLOWED.length || 'any'}`,
+        `node    : ${process.version}`,
+    ].join('\n');
+    bot.sendMessage(chatId, '```\n' + lines + '\n```', { parse_mode: 'Markdown' });
+});
 
 bot.on('polling_error', e => console.error('polling', e.message));
 console.log(`[bot] up. provider=${PROVIDER} allowed=${ALLOWED.length || 'any'}`);
