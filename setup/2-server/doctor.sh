@@ -50,12 +50,44 @@ section 'container'
 if docker ps --format '{{.Names}}' | grep -qx 'zf-bot'; then
     ok 'zf-bot laeuft'
     rs=$(docker inspect -f '{{.RestartCount}}' zf-bot 2>/dev/null || echo '?')
-    health=$(docker inspect -f '{{.State.Status}}' zf-bot 2>/dev/null || echo '?')
-    ok "  status=$health restarts=$rs"
+    health=$(docker inspect -f '{{.State.Health.Status}}' zf-bot 2>/dev/null || echo 'n/a')
+    state=$(docker inspect -f '{{.State.Status}}' zf-bot 2>/dev/null || echo '?')
+    ok "  state=$state health=$health restarts=$rs"
     echo '  letzte logs:'
     docker logs --tail=5 zf-bot 2>&1 | sed 's/^/    /'
 else
     fail 'zf-bot Container nicht gefunden'
+fi
+
+section 'webhook'
+if docker exec zf-bot wget -qO- --timeout=3 http://127.0.0.1:8080/healthz 2>/dev/null | grep -q '"ok":true'; then
+    ok '/healthz ok'
+else
+    warn '/healthz nicht erreichbar oder kein ok:true'
+fi
+
+section 'tunnel'
+if docker ps --format '{{.Names}}' | grep -qx 'zf-tunnel'; then
+    ok 'zf-tunnel laeuft'
+    docker logs --tail=3 zf-tunnel 2>&1 | sed 's/^/    /'
+else
+    warn 'zf-tunnel Container nicht aktiv (Mail-Ingest deaktiviert)'
+fi
+
+section 'google'
+if [ -f "$env_file" ] && grep -qE '^GOOGLE_REFRESH_TOKEN=.+' "$env_file"; then
+    cid=$(grep -E '^GOOGLE_CLIENT_ID='     "$env_file" | head -n1 | cut -d= -f2-)
+    csec=$(grep -E '^GOOGLE_CLIENT_SECRET=' "$env_file" | head -n1 | cut -d= -f2-)
+    rtok=$(grep -E '^GOOGLE_REFRESH_TOKEN=' "$env_file" | head -n1 | cut -d= -f2-)
+    code=$(curl -s -o /dev/null -w '%{http_code}' \
+        --data-urlencode "client_id=$cid" \
+        --data-urlencode "client_secret=$csec" \
+        --data-urlencode "refresh_token=$rtok" \
+        --data-urlencode 'grant_type=refresh_token' \
+        https://oauth2.googleapis.com/token || echo '000')
+    [ "$code" = '200' ] && ok 'google token: ok' || warn "google token: http $code"
+else
+    warn 'google nicht konfiguriert (kein GOOGLE_REFRESH_TOKEN)'
 fi
 
 section 'resources'

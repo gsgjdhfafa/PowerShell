@@ -50,6 +50,22 @@ Live-Tracker. Bei jedem Schritt nach Erledigung Haken setzen.
 - [ ] `setup/cheatsheet.md` aus Bilder-Ordner gefuellt
 - [ ] PR #1 gemerged (Base ggf. auf `main` umgestellt)
 
+## Phase 6 — Mail-Ingest, Google Sync, Tunnel
+- [ ] Cloudflare: Domain ist auf CF, **Email Routing** aktiv
+- [ ] Cloudflare: **Tunnel** angelegt, Public Hostname `bot.deine-domain` -> `http://bot:8080`, Token in `.env` als `CF_TUNNEL_TOKEN`
+- [ ] Google Cloud Console: Projekt + OAuth-Client "Desktop App", Consent-Screen "In production"
+- [ ] `node setup/4-integration/oauth-helper.mjs` ausgefuehrt -> ENV-Block in `.env` eingetragen
+- [ ] Notion: Tasks-DB um Properties **GTaskId** (Text) und **EventId** (Text) erweitert
+- [ ] `WEBHOOK_SECRET` (>= 32 Zeichen) in `.env` gesetzt
+- [ ] Cloudflare Worker `zf-mail` deployed (`wrangler deploy`), Secrets `WEBHOOK_SECRET` + `BOT_URL`
+- [ ] Email Routing Rule `inbox@deine-domain` -> Worker `zf-mail`
+- [ ] Gmail-Filter `[ZF]` -> Forward an `inbox@deine-domain`, Forward-Adresse bestaetigt
+- [ ] `bash setup/2-server/06-tunnel.sh` -> Tunnel-Container laeuft
+- [ ] `curl https://bot.deine-domain/healthz` -> `{"ok":true,...}`
+- [ ] Test-Mail mit `[ZF]` Subject -> Notion-Eintrag erscheint
+- [ ] `/task ... morgen 14 Uhr` -> Notion + Google Tasks + Calendar Event
+- [ ] `doctor.sh` zeigt tunnel + webhook + google: ok
+
 ## Commits (Historie)
 - `f217e24` Basis-Stack
 - `b34dbdc` Style-Skript + Cheatsheet
@@ -57,4 +73,5 @@ Live-Tracker. Bei jedem Schritt nach Erledigung Haken setzen.
 - `b58d11f` Codex-Review-Fixes (SSH-Lockout, Compose, Cost)
 - `17b2c63` Bootstrap One-Liner + update.sh
 - `9076c67` /help /status + doctor.sh
-- `<next>`  dev-setup + dev-tools.md + PROGRESS.md
+- `1d40128` dev-setup + dev-tools.md + PROGRESS.md
+- `<next>`  Phase 2: src/-Refactor, Mail-Ingest, Google-Sync, CF-Tunnel

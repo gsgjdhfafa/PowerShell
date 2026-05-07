@@ -1,7 +1,10 @@
 # Zero-Friction Cloud Stack
 
 ```
-Telegram  ->  VPS  ->  KI (OpenAI/Claude)  ->  Notion  ->  Telegram
+Telegram   ─┐
+            │
+Gmail [ZF] ─┴─> CF Worker ─> VPS bot ─> AI ─> Notion ─┬─> Google Tasks
+                                                      └─> Google Calendar
 ```
 
 ## Reihenfolge
@@ -56,9 +59,21 @@ APP_USER=ops bash setup/2-server/doctor.sh
 ## Bot Commands
 
 ```
-/task <text>   Aufgabe -> Notion: Tasks
+/task <text>   Aufgabe -> Notion: Tasks  (+ Google Tasks; mit Datum + Calendar-Event)
 /note <text>   Notiz   -> Notion: Memory
 /cost <text>   Ausgabe -> Notion: Costs
-/status        Bot-Health (uptime, AI provider, Notion-Ping)
+/status        uptime, AI, Notion, Google, Webhook
 /help          Command-Liste
 ```
+
+## Mail-Ingest (Phase 2)
+
+Gmail-Filter mit Label `[ZF]` -> Cloudflare Email Routing -> Worker -> Bot
+`/mail`-Webhook (HMAC-signiert). AI klassifiziert (note/task/cost/calendar)
+und routet wie der jeweilige Telegram-Command.
+
+Setup:
+- `setup/4-integration/oauth-helper.mjs` lokal -> Google-Refresh-Token.
+- `setup/4-integration/cloudflare-worker.js` per `wrangler deploy`.
+- `setup/4-integration/gmail-filter.md` als Anleitung.
+- `setup/2-server/06-tunnel.sh` startet `cloudflared`-Container.

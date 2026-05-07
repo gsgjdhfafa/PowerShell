@@ -34,4 +34,17 @@ else
     echo "[i] REPO_URL nicht gesetzt -> Deploy uebersprungen."
 fi
 
+# Tunnel nur wenn Token gesetzt ist (Env oder bereits in .env nach Deploy).
+ENV_FILE="/home/${APP_USER}/app/setup/3-bot/.env"
+TUNNEL_TOKEN="${CF_TUNNEL_TOKEN:-}"
+if [ -z "$TUNNEL_TOKEN" ] && [ -f "$ENV_FILE" ]; then
+    TUNNEL_TOKEN="$(grep -E '^CF_TUNNEL_TOKEN=' "$ENV_FILE" | head -n1 | cut -d= -f2-)"
+fi
+if [ -n "$TUNNEL_TOKEN" ]; then
+    echo "[*] 06 tunnel"
+    CF_TUNNEL_TOKEN="$TUNNEL_TOKEN" bash "$SD/06-tunnel.sh"
+else
+    echo "[i] CF_TUNNEL_TOKEN nicht gesetzt -> Tunnel uebersprungen (Bot laeuft trotzdem)."
+fi
+
 echo "[done] bootstrap fertig."

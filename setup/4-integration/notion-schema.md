@@ -15,6 +15,8 @@ Datenbank-ID aus der URL nehmen (32 Zeichen) und in `.env` eintragen.
 - Due       : Date
 - Priority  : Select   (Optionen: low, med, high)
 - Notes     : Text
+- GTaskId   : Text     (befuellt durch Bot beim Sync zu Google Tasks)
+- EventId   : Text     (befuellt durch Bot beim Anlegen von Google Calendar Event)
 
 ## Costs   (NOTION_DB_COSTS)
 - Name      : Title
