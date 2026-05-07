@@ -6,11 +6,12 @@ Telegram  ->  VPS  ->  KI (OpenAI/Claude)  ->  Notion  ->  Telegram
 
 ## Reihenfolge
 
-1. `1-pc/`          Windows Brave + Bookmarks + Start-Tabs + Style
+1. `1-pc/`          Windows Brave + Bookmarks + Start-Tabs + Style + Dev-Toolchain
 2. `2-server/`      Ubuntu VPS: Base, Security, Docker, Node
 3. `3-bot/`         Telegram Bot (Node.js, Docker)
-4. `4-integration/` Notion DBs + ENV Template
+4. `4-integration/` Notion DBs + ENV Template + Dev-Tools-Liste
 5. `cheatsheet.md`  Shortcuts (wird aus Screenshots gepflegt)
+6. `PROGRESS.md`    Live-Tracker, Haken setzen waehrend Setup laeuft
 
 Jeder Schritt ist idempotent. Mehrfach ausfuehrbar. Keine GUI.
 
