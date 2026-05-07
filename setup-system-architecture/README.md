@@ -16,6 +16,7 @@ Telegram -> VPS (Node.js Bot) -> KI (OpenAI/Claude) -> Notion -> Telegram
 02-server/       Ubuntu VPS Base + Docker + Node + Firewall
 03-bot/          Telegram Bot (Node.js, dockerized)
 04-integration/  OpenAI + Claude + Notion Module
+05-vr/           PICO 4 Ultra Geraete-Checkliste (Cloud-Client, kein Backend-Change)
 ```
 
 ## Reihenfolge
