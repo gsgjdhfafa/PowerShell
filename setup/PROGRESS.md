@@ -55,7 +55,7 @@ Live-Tracker. Bei jedem Schritt nach Erledigung Haken setzen.
 - [ ] Cloudflare: **Tunnel** angelegt, Public Hostname `bot.deine-domain` -> `http://bot:8080`, Token in `.env` als `CF_TUNNEL_TOKEN`
 - [ ] Google Cloud Console: Projekt + OAuth-Client "Desktop App", Consent-Screen "In production"
 - [ ] `node setup/4-integration/oauth-helper.mjs` ausgefuehrt -> ENV-Block in `.env` eingetragen
-- [ ] Notion: Tasks-DB um Properties **GTaskId** (Text) und **EventId** (Text) erweitert
+- [x] Notion: Tasks-DB um Properties **GTaskId** (Text) und **EventId** (Text) erweitert
 - [ ] `WEBHOOK_SECRET` (>= 32 Zeichen) in `.env` gesetzt
 - [ ] Cloudflare Worker `zf-mail` deployed (`wrangler deploy`), Secrets `WEBHOOK_SECRET` + `BOT_URL`
 - [ ] Email Routing Rule `inbox@deine-domain` -> Worker `zf-mail`
