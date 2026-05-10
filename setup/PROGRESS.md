@@ -47,7 +47,7 @@ Live-Tracker. Bei jedem Schritt nach Erledigung Haken setzen.
 ## Phase 5 — Habits / Cheatsheet
 - [ ] Brave-Bookmarks geprueft, Start-Tabs ok
 - [ ] Multi-Desktop Setup (Win+Strg+D fuer neuen Desktop)
-- [ ] `setup/cheatsheet.md` aus Bilder-Ordner gefuellt
+- [x] `setup/cheatsheet.md` aus Bilder-Ordner gefuellt
 - [ ] PR #1 gemerged (Base ggf. auf `main` umgestellt)
 
 ## Phase 6 — Mail-Ingest, Google Sync, Tunnel
