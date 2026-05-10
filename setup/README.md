@@ -15,6 +15,8 @@ Gmail [ZF] ─┴─> CF Worker ─> VPS bot ─> AI ─> Notion ─┬─> Goog
 4. `4-integration/` Notion DBs + ENV Template + Dev-Tools-Liste
 5. `cheatsheet.md`  Shortcuts (wird aus Screenshots gepflegt)
 6. `PROGRESS.md`    Live-Tracker, Haken setzen waehrend Setup laeuft
+7. `RISIKEN.md`     was schiefgehen kann + Hygiene-Regeln
+8. `CLAUDE.md`      Projekt-Regeln fuer Claude Code (Kapitel-Pflicht etc.)
 
 Jeder Schritt ist idempotent. Mehrfach ausfuehrbar. Keine GUI.
 
