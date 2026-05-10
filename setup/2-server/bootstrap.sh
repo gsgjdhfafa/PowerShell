@@ -47,4 +47,14 @@ else
     echo "[i] CF_TUNNEL_TOKEN nicht gesetzt -> Tunnel uebersprungen (Bot laeuft trotzdem)."
 fi
 
+# Watchdog installieren wenn Telegram-Konfiguration in .env vorhanden ist.
+if [ -f "$ENV_FILE" ] && grep -qE '^TELEGRAM_BOT_TOKEN=.+' "$ENV_FILE" \
+   && (grep -qE '^WATCHDOG_CHAT_ID=.+' "$ENV_FILE" \
+       || grep -qE '^TELEGRAM_ALLOWED_USER_IDS=.+' "$ENV_FILE"); then
+    echo "[*] 07 watchdog"
+    bash "$SD/install-watchdog.sh"
+else
+    echo "[i] Telegram-Cfg fehlt oder unvollstaendig -> Watchdog uebersprungen."
+fi
+
 echo "[done] bootstrap fertig."

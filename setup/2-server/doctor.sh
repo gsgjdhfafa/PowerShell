@@ -90,6 +90,29 @@ else
     warn 'google nicht konfiguriert (kein GOOGLE_REFRESH_TOKEN)'
 fi
 
+section 'provider-reachability'
+# Anthropic: Antwort 400/401 = Server lebt; nur Timeout/000 = fail.
+ac=$(curl -s -o /dev/null -m 5 -w '%{http_code}' https://api.anthropic.com/v1/messages -X POST -H 'content-type: application/json' --data '{}' || echo '000')
+case "$ac" in 000|5*) warn "anthropic: $ac";; *) ok "anthropic: $ac";; esac
+oc=$(curl -s -o /dev/null -m 5 -w '%{http_code}' https://api.openai.com/v1/models || echo '000')
+case "$oc" in 000|5*) warn "openai: $oc";; *) ok "openai: $oc";; esac
+if curl -s -o /dev/null -m 3 http://127.0.0.1:11434/api/tags; then
+    ok 'ollama lokal: erreichbar'
+else
+    : # ollama nicht installiert auf VPS (normal)
+fi
+
+section 'watchdog'
+if crontab -u "$APP_USER" -l 2>/dev/null | grep -qF 'watchdog.sh'; then
+    ok 'cron-eintrag aktiv'
+    if [ -f /var/log/zf-watchdog.log ]; then
+        last=$(tail -n1 /var/log/zf-watchdog.log 2>/dev/null || echo '?')
+        ok "  letzter run: $last"
+    fi
+else
+    warn 'kein cron-eintrag fuer watchdog (install-watchdog.sh laufen lassen)'
+fi
+
 section 'resources'
 df -h / | awk 'NR==2{printf "  disk /: %s used of %s (%s)\n", $3, $2, $5}'
 free -h | awk '/Mem:/{printf "  mem   : %s used of %s\n", $3, $2}'
