@@ -78,24 +78,90 @@ Praktisch, in Deutsch, mit Beispielen. Englische Fachbegriffe stehen in (Klammer
 
 ## 4. Pipeline TOP-4 (Reihenfolge nach Wichtigkeit)
 
-| # | Stufe       | Was zu tun ist                                                        |
-|---|-------------|-----------------------------------------------------------------------|
-| 1 | PITCH       | Pitch + Business-Plan + Anhang + TV-Aussage + Know-how (KI4KI)        |
-| 2 | BEWERBUNG   | Programm-Calls KI4KI + Taucherteam Triton GmbH                        |
-| 3 | INSOLVENZ   | Widerspruch einlegen, Fristen so weit wie moeglich verlaengern        |
-| 4 | BETREUUNG   | Vorfall an Jugendamt melden + Termin + Oberlandesgericht              |
+```
+   ┌──────────────────┐
+   │  1. PITCH        │  Pitch + Business-Plan + Anhang + TV-Aussage
+   │     (KI4KI)      │  + Know-how
+   └────────┬─────────┘
+            │  bereit
+            ▼
+   ┌──────────────────┐
+   │  2. BEWERBUNG    │  Programm-Calls KI4KI
+   │                  │  + Taucherteam Triton GmbH
+   └────────┬─────────┘
+            │  laeuft
+            ▼
+   ┌──────────────────┐
+   │  3. INSOLVENZ    │  Widerspruch einlegen
+   │  (fristengetr.)  │  + Fristen maximal verlaengern
+   └────────┬─────────┘
+            │  parallel
+            ▼
+   ┌──────────────────┐
+   │  4. BETREUUNG    │  Vorfall an Jugendamt
+   │  (fristengetr.)  │  + Termin + Oberlandesgericht
+   └──────────────────┘
+```
+
+> Stufen 3+4 sind **fristengetrieben** — Kalender oeffnen, Termin **sofort** eintragen, sonst weg.
 
 ---
 
-## 5. Workflows TOP-5 (wie laeuft der Tag)
+## 5. Workflows TOP-5 — wie laeuft der Tag konkret
 
-| Workflow         | Schritte                                                                   |
-|------------------|----------------------------------------------------------------------------|
-| Briefe-Pipeline  | Scan → OCR → Ollama klassifiziert → Triage → Inbox/Pending/Done            |
-| Tasks-Pipeline   | `Pipeline.md` (Top-4) → Asana operativ → wer arbeitet woran                |
-| Knowledge        | NotebookLM (Master, 6 Buecher, ~235 Quellen) — Hotkey `Shift+F9`           |
-| Mail-Triage      | Gmail Gerrit/TTT/Comet → Briefe-Triage → Antworten oder Archiv             |
-| Code-Workflow    | PowerShell direkt | AHK Skripte | Python in `Briefe\Bin` | KEIN VS Code   |
+### Briefe-Pipeline
+```
+[Scanner]  →  [PDF in Inbox\]  →  [classify.py]  →  [Triage-Mensch]
+                                       │                │
+                                       ▼                ▼
+                                  Pending\          Done\ / Processing\
+```
+**So machst du das**:
+1. Scanner → speichert PDF in `C:\Users\Admin\Briefe\Inbox\`
+2. PowerShell oeffnen, hin: `cd C:\Users\Admin\Briefe\Bin`
+3. Klassifizierer laufen lassen: `python classify.py`
+4. Skript verschiebt Briefe automatisch in `Pending\`, `Done\`, `Processing\`
+5. Du oeffnest `Pending\` und entscheidest was passiert.
+
+### Tasks-Pipeline
+```
+Pipeline.md (Top-4)  →  Asana (operatives Brett)  →  Wer arbeitet woran
+```
+**So machst du das**:
+1. `Pipeline.md` in Notepad oder Browser auf — die 4 Stufen anschauen.
+2. Asana oeffnen (`Shift+F10`) — pruefen welcher Stufe gerade in Arbeit ist.
+3. Stand fuer dich: welcher KI-Chat / welche Person macht was.
+
+### Knowledge (NotebookLM)
+```
+6 Bookmarks (Master)  →  ~235 Sources  →  Frage stellen
+                                        →  Antwort mit Quellen-Klick
+```
+**So machst du das**:
+1. `Shift+F9` → NotebookLM oeffnet (Master-Account).
+2. Notebook waehlen.
+3. Unten Frage tippen → KI antwortet mit numerierten Klick-Quellen.
+
+### Mail-Triage
+```
+[Gmail Gerrit]  ─┐
+[Gmail TTT]      ├──>  [Briefe-Triage]  ─→  Antwort  oder  Archiv
+[Gmail Comet]    ─┘
+```
+**So machst du das**:
+1. Reihenfolge: `Shift+F1` → durchgehen, `Shift+F2` → durchgehen, `Shift+F3` → durchgehen.
+2. Mails die ein Brief sind → in Briefe-Triage uebernehmen.
+3. Rest: antworten oder `e` (Archiv) druecken.
+
+### Code-Workflow (KEIN VS Code)
+```
+PowerShell direkt   →   AHK Skripte   →   Python (Briefe\Bin)
+     (Kommandos)        (Hotkeys)         (Klassifizierung)
+```
+**So machst du das**:
+1. PowerShell-Befehl: einfach tippen, Enter.
+2. AHK aendern: Datei in Notepad auf, aendern, doppelklick zum Neuladen.
+3. Python: `python <datei>.py` in `C:\Users\Admin\Briefe\Bin`.
 
 ---
 
@@ -355,3 +421,47 @@ Sidebar links → 4-Quader-Icon → suchen + installieren:
 - **Notepad**: schnelle Textnotiz, eine Zeile aendern.
 - **PowerShell direkt**: ein Befehl, kein Editieren noetig.
 - **VS Code**: mehrere Dateien, Ordnerstruktur, Suchen ueber alles, Git-Status.
+
+---
+
+# HEISSE TIPPS — Reddit + GitHub (kurz erklaert)
+
+> Quellen, die wirklich Substanz haben. Klick + Lesezeichen wert.
+
+## Reddit-Subs (ueber Brave einfach `reddit.com/r/<name>` auf)
+
+| Sub                | Was du da findest                                              | Wann hilft es dir |
+|--------------------|----------------------------------------------------------------|-------------------|
+| `r/AutoHotkey`     | AHK-Skripte, Tasten-Tricks                                     | wenn `account-shortcuts.ahk` Macken hat |
+| `r/PowerShell`     | Skripte, One-Liner, Modul-Tipps                                | fuer dein `Briefe\Bin` und `Dashboard` |
+| `r/Windows11`      | Bug-Fixes, Workarounds, Power-Tweaks                           | bei Windows-Problemen |
+| `r/LocalLLaMA`     | Lokale KI-Modelle (Ollama, llama.cpp, qwen, mistral)           | dein lokaler Bot |
+| `r/ChatGPTCoding`  | Prompt-Patterns fuer Code, Workflows                            | wenn KI Code schreiben soll |
+| `r/sysadmin`       | Server-/Admin-Tipps                                            | wenn dein VPS Aerger macht |
+| `r/selfhosted`     | Eigene Dienste hosten (Notion-Alternativen, Mail, Tools)       | falls du was nachbauen willst |
+| `r/productivity`   | Workflow-Tipps fuer Knowledge-Worker                           | Inspiration fuer deine Pipelines |
+
+## GitHub-Repos (oeffnen ueber `github.com/<pfad>`)
+
+| Repo                                   | Was es macht                                          |
+|----------------------------------------|-------------------------------------------------------|
+| `microsoft/PowerToys`                   | FancyZones, PowerRename, Awake — quasi Pflicht        |
+| `AutoHotkey/AutoHotkey`                 | AutoHotkey selbst, Doku + Beispiele                   |
+| `ollama/ollama`                         | dein lokaler KI-Server                                |
+| `open-webui/open-webui`                 | huebsche Web-Oberflaeche fuer Ollama (statt CLI)      |
+| `microsoft/terminal`                    | Windows Terminal Quelle + Tipps                       |
+| `nvbn/thefuck`                          | tippst falsche Kommandos? `fuck` korrigiert sie       |
+| `sharkdp/bat`                           | `cat`-Ersatz mit Syntax-Highlighting                  |
+| `junegunn/fzf`                          | Fuzzy-Finder fuer alles                               |
+| `ajeetdsouza/zoxide`                    | smarter `cd` — merkt Verzeichnisse                    |
+| `chriskempson/base16`                   | konsistente Farb-Schemas fuer Terminal + Editor       |
+| `awesome-selfhosted/awesome-selfhosted` | riesige Liste selbst-hostbarer Tools                  |
+| `f/awesome-chatgpt-prompts`             | gute System-Prompts (auch fuer Claude/Ollama nutzbar) |
+| `rasbt/LLMs-from-scratch`               | KI-Modelle selbst verstehen                           |
+
+## So machst du das praktisch
+
+- **Reddit speichern**: in Brave einloggen → bei interessanten Posts auf „Save" klicken → spaeter auf `reddit.com/user/<dein_name>/saved`.
+- **GitHub Repo merken**: oben rechts auf den Stern „Star" klicken → spaeter auf `github.com/<dein_name>?tab=stars`.
+- **GitHub Repo herunterladen**: gruener „Code"-Button → „Download ZIP". Oder per Terminal: `git clone https://github.com/<pfad>.git`.
+- **Repo direkt im Browser lesen**: hinten an die URL `?plain=1` haengen oder `.` druecken — oeffnet eine eingebaute VS-Code-Oberflaeche im Browser.
