@@ -2,6 +2,21 @@
 
 Praktisch, in Deutsch, mit Beispielen. Englische Fachbegriffe stehen in (Klammern).
 
+## Inhalt
+
+1. [Hotkeys](#1-hotkeys--was-passiert-wenn-du-sie-drueckst)
+2. [Wichtige Pfade](#2-wichtige-pfade--wo-lebt-was)
+3. [Goldene Regeln](#3-goldene-regeln-auf-deutsch-ohne-tech-sprech)
+4. [Pipeline TOP-4](#4-pipeline-top-4-reihenfolge-nach-wichtigkeit)
+5. [Workflows TOP-5](#5-workflows-top-5--wie-laeuft-der-tag-konkret)
+6. [KI-Tools](#ki-tools--was-wo-wofuer)
+7. [Brave-Profile sauber halten](#brave-profile-sauber-halten)
+8. [Comet-Tipps (Perplexity-Browser)](#comet-tipps-perplexity-browser)
+9. [Asana-Workflow](#asana-workflow)
+10. [Ollama](#ollama--dein-lokaler-ki-server-tutorial)
+11. [VS Code Tutorial](#vs-code--tutorial-sektion)
+12. [Heisse Tipps Reddit + GitHub](#heisse-tipps--reddit--github-kurz-erklaert)
+
 ---
 
 ## 1. HOTKEYS — was passiert wenn du sie drueckst
@@ -219,6 +234,122 @@ PowerShell direkt   →   AHK Skripte   →   Python (Briefe\Bin)
 
 ---
 
+# Brave-Profile sauber halten
+
+Brave ist dein **einziger Browser**. Jeder Account = ein eigenes **Profil** (eigene Cookies, Verlauf, Bookmarks).
+
+```
+Brave-Fenster (Gerrit/Master)        Brave-Fenster (TTT/Taucher)
++--------------------------+         +--------------------------+
+| Profile-Icon: G          |         | Profile-Icon: T          |
+| Tabs:                    |         | Tabs:                    |
+|  Gmail Master            |         |  Gmail Taucher           |
+|  Drive Master            |         |  Drive Taucher           |
++--------------------------+         +--------------------------+
+```
+
+## Profil anlegen (einmalig)
+
+1. Brave starten.
+2. Oben rechts: kleines Profilbild → **„Andere hinzufuegen"** (engl. „Add Profile").
+3. Name + Farbe waehlen. Brave macht automatisch eine eigene Verknuepfung im Startmenue.
+4. Im neuen Profil bei Google einloggen.
+
+## Brave **immer mit Profil** starten — ueber Verknuepfung / AHK
+
+Wenn du Brave per Hotkey startest, **immer** den `--profile-directory=`-Parameter mitgeben, sonst landest du im Default-Profil. Beispiel aus deinem `account-shortcuts.ahk`:
+
+```ahk
+; Profile-Mapping:
+;   Default   = Gerrit (Master)
+;   Profile 1 = TTT (Taucher)
+;   Profile 2 = TTT-Pro
+
+#F7::  ; Drive Gerrit
+Run, "C:\Program Files\BraveSoftware\Brave-Browser\Application\brave.exe" --profile-directory="Default" "https://drive.google.com"
+return
+```
+
+## Profil-Ordner auf der Platte
+
+```
+C:\Users\<du>\AppData\Local\BraveSoftware\Brave-Browser\User Data\
+   Default\        <- Gerrit (Master)
+   Profile 1\      <- TTT (Taucher)
+   Profile 2\      <- TTT-Pro
+```
+
+Wenn ein Profil zerschiesst: Ordner umbenennen (nicht loeschen) → Brave neu starten → frischer wird angelegt → Bookmarks/History selektiv zurueckkopieren.
+
+---
+
+# Comet-Tipps (Perplexity-Browser)
+
+Comet ist ein Chromium-Browser **mit eingebauter KI**. Default-Profil **Neptun** = TTT-Pro. Profile1 = Gerrit (KI4KI).
+
+| Feature                    | Wozu                                                            |
+|----------------------------|-----------------------------------------------------------------|
+| **Sidekick** (`Alt+L`)     | KI-Chat im rechten Bereich, kennt den **aktuellen Tab**         |
+| **Web-Aktion** (Pro)       | „Bestelle…" / „Fasse alle Tabs zusammen" — KI klickt selber     |
+| **Tasks-Panel** (`Strg+J`) | Aufgaben-Stack der KI fuer aktive Sessions                      |
+| **Spaces**                 | Container fuer Themen mit eigenen Prompts + Files               |
+
+## Profile in Comet wechseln
+
+1. Oben links auf das **Profilbild**.
+2. **„Profil wechseln"** → das andere waehlen (Comet oeffnet ein neues Fenster).
+3. Per Hotkey: `Shift+F3` → 3 Comet-Fenster TTT-Pro auf einmal.
+
+## Sidekick produktiv
+
+- `Alt+L` → Sidekick auf.
+- „**fasse diese seite zusammen**" — Comet liest aktiven Tab.
+- Markierten Text einbauen: Text markieren → Sidekick auf → „**erklaere die markierte Stelle**".
+- „**fass die offenen tabs in 3 bullet-points zusammen**" — Comet kennt die Tab-Liste.
+
+## Spaces fuer Themen
+
+1. Sidekick → unten rechts **„+ Space"**.
+2. Name geben (z.B. „Insolvenz"), eigenen System-Prompt eintragen, Files hochladen (Vertraege etc.).
+3. Spaeter: Sidekick → oben Space waehlen → Antworten kommen mit Kontext aus den Files.
+
+---
+
+# Asana-Workflow
+
+Asana = dein **operatives Aufgaben-Brett** (TTT-Pro). Notion ist Strategie + SoT, Asana ist „wer macht was heute".
+
+```
+[Notion Pipeline.md]  →  [Asana: heute]  →  [Erledigt → Done]
+   (Ueberblick)            (Konkrete Tasks)     (Haken)
+```
+
+## Mini-Hotkeys in Asana (nutzbar wenn Asana-Tab aktiv)
+
+| Hotkey            | Was passiert                       |
+|-------------------|------------------------------------|
+| `Tab + Q`         | Quick-Add Task                     |
+| `Tab + N`         | Neuer Task in aktueller Liste      |
+| `Tab + S`         | Subtask anlegen                    |
+| `Tab + M`         | Task mir zuweisen                  |
+| `Tab + D`         | Faelligkeitsdatum setzen           |
+| `Strg+Enter`      | Kommentar abschicken               |
+| `Strg+/`          | Tasten-Liste anzeigen              |
+
+## Standard-Briefe-Triage in Asana
+
+- **Project**: Briefe-Triage
+- **Sections**: `Inbox`, `Pending`, `Antwort entwerfen`, `Versendet`, `Done`
+- Workflow: neuer Brief → Inbox → klar wer/was → Pending mit Faelligkeit → Antwort schreiben → Versendet → Done.
+
+## Asana mit dem Bot verbinden (spaeter)
+
+- API: `https://app.asana.com/api/1.0`.
+- Token: Asana → Profil → **Apps** → Personal Access Token.
+- Liesse sich aehnlich wie Notion in den Telegram-Bot einhaengen — sag wenn du das willst.
+
+---
+
 # OLLAMA — dein lokaler KI-Server (Tutorial)
 
 > Ollama laesst KI-Modelle **direkt auf deinem PC** laufen. Kein Internet noetig, keine Daten gehen raus. Genau das Ding hinter deinem `Ask`-Fenster (qwen2.5:7b lokal).
@@ -333,6 +464,47 @@ Jetzt ist `brief-bot` ein eigenes Modell mit deiner Persona — kannst du immer 
 
 `C:\Users\Admin\Ask` enthaelt vermutlich ein kleines WPF/AHK-Fenster, das genau so eine `Invoke-RestMethod`- oder Python-Anfrage an `localhost:11434` schickt. Wenn du das Modell wechseln willst: in der Konfig-Datei `qwen2.5:7b` durch deinen Wunschnamen ersetzen.
 
+## I. Konkrete Use-Cases fuer DEINEN Tag
+
+### 1. Brief klassifizieren (statt `classify.py`)
+```powershell
+$brief = Get-Content C:\Users\Admin\Briefe\Inbox\brief1.txt -Raw
+$body = @{
+    model = 'qwen2.5:7b'
+    prompt = "Klassifiziere diesen Brief in eine der Kategorien: Insolvenz, Betreuung, Behoerde, Rechnung, Werbung, Sonstiges. Antworte NUR mit dem Kategoriennamen.`n`n$brief"
+    stream = $false
+} | ConvertTo-Json
+(Invoke-RestMethod http://localhost:11434/api/generate -Method Post -Body $body -ContentType 'application/json').response
+```
+
+### 2. Mail-Antwort entwerfen
+```powershell
+$mail = 'Sehr geehrter Herr Marbach, anbei der Vertrag.'
+$prompt = "Entwirf eine kurze, hoefliche deutsche Antwortmail. Schliesse mit 'Mit freundlichen Gruessen, Gerrit'. Mail:`n$mail"
+ollama run qwen2.5:7b $prompt
+```
+
+### 3. Vertrag zusammenfassen
+```powershell
+$txt = Get-Content C:\Users\Admin\Briefe\Pending\vertrag.txt -Raw
+ollama run qwen2.5:7b "Fasse den folgenden Vertrag in 5 Bullet-Points: Vertragspartner, Laufzeit, Hauptpflichten, Kuendigung, Risiken.`n`n$txt"
+```
+
+### 4. JSON-Extraktion (z.B. Termine aus Text)
+```powershell
+$text = 'Termin Zahnarzt am 12.06. um 14 Uhr Praxis Mueller'
+$body = @{
+    model = 'qwen2.5:7b'
+    prompt = "Extrahiere als JSON: {titel, datum_iso, ort}. Antwort nur JSON.`n`n$text"
+    stream = $false
+    format = 'json'
+} | ConvertTo-Json
+(Invoke-RestMethod http://localhost:11434/api/generate -Method Post -Body $body -ContentType 'application/json').response
+```
+
+### 5. Streaming-Modus (Antwort tropft Wort fuer Wort rein)
+Im Body `stream = $true` setzen → Antwort kommt als JSON-Lines, du kannst frueh anfangen zu lesen. Nuetzlich fuer das `Ask`-Fenster, damit es nicht „haengt".
+
 ---
 
 # VS CODE — Tutorial-Sektion
@@ -421,6 +593,45 @@ Sidebar links → 4-Quader-Icon → suchen + installieren:
 - **Notepad**: schnelle Textnotiz, eine Zeile aendern.
 - **PowerShell direkt**: ein Befehl, kein Editieren noetig.
 - **VS Code**: mehrere Dateien, Ordnerstruktur, Suchen ueber alles, Git-Status.
+
+## I. Konkrete Mini-Tasks fuer DEINEN Tag
+
+### 1. `classify.py` anpassen (Briefe-Bin)
+1. VS Code starten, **File → Open Folder…** → `C:\Users\Admin\Briefe\Bin`.
+2. Links `classify.py` anklicken.
+3. Aenderung machen, `Strg+S` speichern.
+4. Terminal aufmachen: `Strg+ö` → `python classify.py`.
+5. Output siehst du sofort im Terminal — Fehler stehen mit Zeilennummer da.
+
+### 2. Suchen + Ersetzen ueber alle Dateien im Ordner
+- `Strg+Shift+F` → links erscheint Suche.
+- Suchstring eintippen, daneben Replace-String, Knopf „Ersetze alle".
+- Praktisch wenn du z.B. `qwen2.5:7b` ueberall durch `llama3.2:3b` tauschen willst.
+
+### 3. Neues PowerShell-Skript anlegen + ausfuehren
+1. `Strg+N` → neue leere Datei.
+2. `Strg+S` → Name `test.ps1` speichern.
+3. Reinschreiben:
+   ```powershell
+   Get-ChildItem C:\Users\Admin\Briefe\Inbox\*.pdf | Measure-Object | % Count
+   ```
+4. `Strg+ö` → Terminal auf.
+5. Tippen: `.\test.ps1` → Anzahl PDFs erscheint.
+
+### 4. Git-Stand sehen (welche Dateien wurden geaendert)
+- Sidebar links → 3. Icon von oben (Git-Symbol).
+- Du siehst: M = modifiziert, U = untracked, D = geloescht.
+- Klick auf eine Datei → siehst Diff (alt links, neu rechts).
+- Plus-Knopf neben Datei = stagen, Hakerl oben = committen.
+
+### 5. Mehrere Cursor gleichzeitig (Multi-Caret)
+- `Alt + Klick` → setzt einen weiteren Cursor an die Klickstelle.
+- `Strg + D` → markiert das naechste Vorkommen vom selben Wort + setzt Cursor.
+- Tippen → schreibt an allen Cursorn gleichzeitig.
+
+### 6. Datei in Browser-Vorschau (Markdown)
+- `.md`-Datei oeffnen.
+- `Strg+Shift+V` → Vorschau rechts daneben.
 
 ---
 

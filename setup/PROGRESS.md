@@ -56,6 +56,7 @@ Live-Tracker. Bei jedem Schritt nach Erledigung Haken setzen.
 - [ ] Google Cloud Console: Projekt + OAuth-Client "Desktop App", Consent-Screen "In production"
 - [ ] `node setup/4-integration/oauth-helper.mjs` ausgefuehrt -> ENV-Block in `.env` eingetragen
 - [x] Notion: Tasks-DB um Properties **GTaskId** (Text) und **EventId** (Text) erweitert
+- [ ] **Block 2** Google OAuth: siehe `setup/4-integration/google-oauth-howto.md`
 - [ ] `WEBHOOK_SECRET` (>= 32 Zeichen) in `.env` gesetzt
 - [ ] Cloudflare Worker `zf-mail` deployed (`wrangler deploy`), Secrets `WEBHOOK_SECRET` + `BOT_URL`
 - [ ] Email Routing Rule `inbox@deine-domain` -> Worker `zf-mail`
