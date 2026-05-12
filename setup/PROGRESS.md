@@ -89,6 +89,12 @@ Anleitung: [`4-integration/gmail-filter.md`](4-integration/gmail-filter.md)
 - [ ] `claude /login` in WSL
 - [ ] `ollama launch hermes` in WSL
 
+### Block 11 — Chat-Apps + OpenClaw auf dem PC
+- [ ] `setup/1-pc/install-chat-apps.ps1` ausgefuehrt
+- [ ] Telegram Desktop: mit Telefonnummer + SMS-Code eingeloggt
+- [ ] WhatsApp Desktop: per QR-Code mit Handy verknuepft
+- [ ] `ollama launch openclaw` durchgelaufen, OpenClaw startet
+
 ---
 
 ## Erledigt
