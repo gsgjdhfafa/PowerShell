@@ -81,6 +81,14 @@ Anleitung: [`4-integration/gmail-filter.md`](4-integration/gmail-filter.md)
 - [ ] `claude` eingeloggt
 - [ ] `codex` eingeloggt
 
+### Block 10 — WSL + AI-Agents (Hermes, OpenCode)
+- [ ] Admin-PowerShell: `setup/1-pc/install-wsl.ps1`
+- [ ] **Reboot** durchgelaufen
+- [ ] Ubuntu erstmalig gestartet (User + Passwort vergeben)
+- [ ] In Ubuntu: `bash setup/1-pc/install-agents-in-wsl.sh`
+- [ ] `claude /login` in WSL
+- [ ] `ollama launch hermes` in WSL
+
 ---
 
 ## Erledigt
