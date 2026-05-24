@@ -11,16 +11,16 @@ $ErrorActionPreference = 'Stop'
 $SotMain     = 'C:\Users\Admin\Documents\SOT_MASTER_LIVE'
 $VersionsDir = Join-Path $SotMain '_Versions'
 
+Add-Type -AssemblyName System.Windows.Forms
+
+# --- 1. Aktives Explorer-Fenster ermitteln ---------------------------------
 function Get-ActiveExplorerPath {
     $shell = New-Object -ComObject Shell.Application
-    Add-Type @'
-using System;
-using System.Runtime.InteropServices;
-public static class W {
-    [DllImport("user32.dll")] public static extern IntPtr GetForegroundWindow();
-}
+    Add-Type -Name W -Namespace ZF -MemberDefinition @'
+[System.Runtime.InteropServices.DllImport("user32.dll")]
+public static extern System.IntPtr GetForegroundWindow();
 '@ -ErrorAction SilentlyContinue
-    $fg = [W]::GetForegroundWindow()
+    $fg = [ZF.W]::GetForegroundWindow()
     foreach ($w in $shell.Windows()) {
         try {
             if ([IntPtr]$w.HWND -eq $fg) {
@@ -33,29 +33,24 @@ public static class W {
 
 $folder = Get-ActiveExplorerPath
 if (-not $folder -or -not (Test-Path -LiteralPath $folder)) {
-    [System.Windows.Forms.MessageBox] | Out-Null
-    Add-Type -AssemblyName System.Windows.Forms
     [System.Windows.Forms.MessageBox]::Show('Kein Explorer-Fenster aktiv.', 'ZF dedup') | Out-Null
     exit 1
 }
 
-$files = Get-ChildItem -LiteralPath $folder -File -ErrorAction SilentlyContinue
-if (-not $files -or $files.Count -lt 2) {
-    Add-Type -AssemblyName System.Windows.Forms
+# --- 2. Dateien einsammeln -------------------------------------------------
+$files = @(Get-ChildItem -LiteralPath $folder -File -ErrorAction SilentlyContinue)
+if ($files.Count -lt 2) {
     [System.Windows.Forms.MessageBox]::Show("Nichts zu tun in:`n$folder", 'ZF dedup') | Out-Null
     exit 0
 }
 
+# --- 3. Hash + Gruppieren --------------------------------------------------
 $stamp     = Get-Date -Format 'yyyy-MM-dd_HHmm'
 $runDir    = Join-Path $VersionsDir $stamp
 $relSource = ($folder -replace '^[A-Za-z]:\\', '') -replace '[\\/]+$', ''
 $target    = Join-Path $runDir $relSource
-if (-not (Test-Path -LiteralPath $target)) {
-    New-Item -ItemType Directory -Path $target -Force | Out-Null
-}
 
-$moved = 0
-$files |
+$dupGroups = $files |
     ForEach-Object {
         [PSCustomObject]@{
             File = $_
@@ -63,26 +58,36 @@ $files |
         }
     } |
     Group-Object Hash |
-    Where-Object { $_.Count -gt 1 } |
-    ForEach-Object {
-        $keep = $_.Group | Sort-Object { $_.File.LastWriteTime } -Descending | Select-Object -First 1
-        $_.Group |
-            Where-Object { $_.File.FullName -ne $keep.File.FullName } |
-            ForEach-Object {
-                $dest = Join-Path $target $_.File.Name
-                $n = 1
-                while (Test-Path -LiteralPath $dest) {
-                    $base = [IO.Path]::GetFileNameWithoutExtension($_.File.Name)
-                    $ext  = [IO.Path]::GetExtension($_.File.Name)
-                    $dest = Join-Path $target ("{0}__{1}{2}" -f $base, $n, $ext)
-                    $n++
-                }
-                Move-Item -LiteralPath $_.File.FullName -Destination $dest -Force
-                $moved++
-            }
-    }
+    Where-Object { $_.Count -gt 1 }
 
-Add-Type -AssemblyName System.Windows.Forms
+if (-not $dupGroups) {
+    [System.Windows.Forms.MessageBox]::Show("Keine Duplikate in:`n$folder", 'ZF dedup') | Out-Null
+    exit 0
+}
+
+# --- 4. Aeltere Kopien wegversionieren -------------------------------------
+if (-not (Test-Path -LiteralPath $target)) {
+    New-Item -ItemType Directory -Path $target -Force | Out-Null
+}
+
+$moved = 0
+foreach ($grp in $dupGroups) {
+    $keep = $grp.Group | Sort-Object { $_.File.LastWriteTime } -Descending | Select-Object -First 1
+    foreach ($item in $grp.Group) {
+        if ($item.File.FullName -eq $keep.File.FullName) { continue }
+        $dest = Join-Path $target $item.File.Name
+        $n = 1
+        while (Test-Path -LiteralPath $dest) {
+            $base = [IO.Path]::GetFileNameWithoutExtension($item.File.Name)
+            $ext  = [IO.Path]::GetExtension($item.File.Name)
+            $dest = Join-Path $target ("{0}__{1}{2}" -f $base, $n, $ext)
+            $n++
+        }
+        Move-Item -LiteralPath $item.File.FullName -Destination $dest -Force
+        $moved++
+    }
+}
+
 [System.Windows.Forms.MessageBox]::Show(
     "$moved Duplikate verschoben nach:`n$target",
     'ZF dedup') | Out-Null

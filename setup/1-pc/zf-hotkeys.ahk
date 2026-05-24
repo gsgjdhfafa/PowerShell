@@ -56,7 +56,7 @@ ExplorerLastHour() {
 GetSelectedExplorerPath() {
     shell := ComObject("Shell.Application")
     activeHwnd := WinExist("A")
-    for w in shell.Windows {
+    for w in shell.Windows() {
         try {
             if (w.HWND = activeHwnd) {
                 sel := w.Document.SelectedItems
