@@ -95,6 +95,43 @@ Anleitung: [`4-integration/gmail-filter.md`](4-integration/gmail-filter.md)
 - [ ] WhatsApp Desktop: per QR-Code mit Handy verknuepft
 - [ ] `ollama launch openclaw` durchgelaufen, OpenClaw startet
 
+### Block 12 — ZF Global Hotkeys (Phase 4)
+Installer: `setup/1-pc/install-hotkeys.ps1` (nicht-elevated, idempotent).
+Ablage-Ordner: `C:\Users\Admin\Documents\SOT_MASTER_LIVE`.
+- [ ] `setup/1-pc/install-hotkeys.ps1` ausgefuehrt (AHK v2 via winget + Startup-Shortcut)
+- [ ] Tray zeigt gruenes H (AHK laeuft)
+- [ ] `Alt+Ctrl+F` -> Everything geht auf
+- [ ] `Alt+Ctrl+G` -> 4 Explorer-Fenster fuer Aufgabenbereiche
+- [ ] `Alt+Ctrl+S` -> Datei landet in `SOT_MASTER_LIVE`
+- [ ] `Alt+Ctrl+X` -> Duplikate wandern nach `_Versions\<timestamp>\`
+- [ ] `Ctrl+^` (bzw. `Ctrl+F12`) -> Fenster werden gekachelt
+- [ ] Reboot -> AHK startet automatisch (Startup-Shortcut)
+
+Hotkey-Mapping (Kurz):
+
+| Chord | Aktion |
+|-------|--------|
+| `Alt+Ctrl+Q` / `F` | Everything oeffnen |
+| `Alt+Ctrl+W` | InputBox-Pattern -> Everything |
+| `Alt+Ctrl+E` | Explorer: Dateien der letzten Stunde |
+| `Alt+Ctrl+A` | Inhalt der Explorer-Selektion in Clipboard (Text-Dateien) |
+| `Alt+Ctrl+S` | Selektion -> `SOT_MASTER_LIVE` kopieren + Ordner oeffnen |
+| `Alt+Ctrl+D` | Windows Power-Panel |
+| `Alt+Ctrl+G` | 4 Explorer mit Pitch/Bewerbung/Insolvenz/Betreuung |
+| `Alt+Ctrl+Y` | Tooltip mit Fenster-Info + Google-Suche |
+| `Alt+Ctrl+X` | Duplikate -> `_Versions\<timestamp>\` |
+| `Alt+Ctrl+P` | Snipping-Tool (`Win+Shift+S`) |
+| `Alt+Ctrl+V` | Xbox Game Bar Aufnahme (`Win+Alt+R`) |
+| `Alt+Ctrl+B` | Global Undo (`Ctrl+Z`) |
+| `Ctrl+^` / `Ctrl+F12` | Alle Fenster ueber Monitore kacheln |
+
+Grenzen:
+- `Alt+Ctrl+A` nur Text (`.txt/.md/.json/.ps1/...`). Binaer-Extraktion (PDF/DOCX) folgt in Phase 5.
+- `Alt+Ctrl+S` kopiert (Goldene Regel: Originale nie verschieben).
+- `Alt+Ctrl+B` ist `Ctrl+Z` an die aktive App — keine app-uebergreifende History.
+- `Alt+Ctrl+D` oeffnet nur das Panel, killt keine Hintergrund-Tasks.
+- KI-Hover (`Alt+Ctrl+Y`) ist aktuell Google-Suche — Ollama-Anbindung folgt in Phase 5.
+
 ---
 
 ## Erledigt
@@ -103,6 +140,7 @@ Anleitung: [`4-integration/gmail-filter.md`](4-integration/gmail-filter.md)
 - [x] Phase 1 — Telegram → AI → Notion-Stack (Basis)
 - [x] Phase 2 — Mail-Ingest (CF Worker → Bot), Google Tasks/Calendar Sync, Cloudflare Tunnel
 - [x] Phase 3 — Watchdog, Cost-Limits-Howto, QUICKSTART, MIGRATION, README/PROGRESS final
+- [x] Phase 4 — ZF Global Hotkeys (AHK v2, Installer, Dedup-Helper)
 
 ### Cheatsheet + Doku
 - [x] `setup/cheatsheet.md` aus Wallpaper-Cards gefuellt + Tutorial-Sektionen (Ollama, VS Code)
@@ -117,7 +155,8 @@ Anleitung: [`4-integration/gmail-filter.md`](4-integration/gmail-filter.md)
 - [ ] Migration zu eigenem Repo `gsgjdhfafa/zf-setup` — siehe [`MIGRATION.md`](MIGRATION.md)
 - [ ] Cost-Limits aktiviert — siehe [`4-integration/cost-limits.md`](4-integration/cost-limits.md)
 - [ ] Multi-Desktop Setup (Win+Strg+D)
-- [ ] Asana mit Bot verbinden (Phase 4 Material)
+- [ ] Asana mit Bot verbinden
+- [ ] Phase 5: Ollama-Hover-Explain, PDF/DOCX-Text-Extraktion fuer `Alt+Ctrl+A`
 
 ---
 
@@ -137,4 +176,10 @@ Anleitung: [`4-integration/gmail-filter.md`](4-integration/gmail-filter.md)
 - `b9a44e4` Brave/Comet/Asana + Ollama/VS-Code Use-Cases + google-oauth-howto
 - `26aef5a` RISIKEN.md + README-Erweiterung
 - `50becb2` CLAUDE.md (Projektregeln)
-- `<next>`  Phase 3: Watchdog, Cost-Limits, QUICKSTART, MIGRATION, README final
+- `ca4980b` Phase 3: Watchdog, Cost-Limits, QUICKSTART, MIGRATION, README/PROGRESS final
+- `3d9f83a` WSL2 + AI-Agents Installer
+- `e8358de` install-chat-apps.ps1 (Telegram, WhatsApp, OpenClaw)
+- `595f70b` kickstart.ps1 (one-shot PC bootstrap)
+- `45f3c32` zf-all.ps1 (single-script Windows bootstrap)
+- `6d11d43` analyze.ps1 (read-only Inventory)
+- `<next>`  Phase 4: ZF Global Hotkeys (AHK v2 + Installer + Dedup-Helper)
