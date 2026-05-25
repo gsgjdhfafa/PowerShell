@@ -95,17 +95,24 @@ Anleitung: [`4-integration/gmail-filter.md`](4-integration/gmail-filter.md)
 - [ ] WhatsApp Desktop: per QR-Code mit Handy verknuepft
 - [ ] `ollama launch openclaw` durchgelaufen, OpenClaw startet
 
-### Block 12 — ZF Global Hotkeys (Phase 4)
+### Block 12 — ZF Global Hotkeys (Phase 4 + Phase 5)
 Installer: `setup/1-pc/install-hotkeys.ps1` (nicht-elevated, idempotent).
 Ablage-Ordner: `C:\Users\Admin\Documents\SOT_MASTER_LIVE`.
-- [ ] `setup/1-pc/install-hotkeys.ps1` ausgefuehrt (AHK v2 via winget + Startup-Shortcut)
+- [ ] `setup/1-pc/install-hotkeys.ps1` ausgefuehrt (AHK v2 via winget + Startup-Shortcut, kopiert auch `extract-content.ps1` + `hover-explain.ps1`)
 - [ ] Tray zeigt gruenes H (AHK laeuft)
 - [ ] `Alt+Ctrl+F` -> Everything geht auf
 - [ ] `Alt+Ctrl+G` -> 4 Explorer-Fenster fuer Aufgabenbereiche
 - [ ] `Alt+Ctrl+S` -> Datei landet in `SOT_MASTER_LIVE`
 - [ ] `Alt+Ctrl+X` -> Duplikate wandern nach `_Versions\<timestamp>\`
+- [ ] `Alt+Ctrl+A` mit PDF/DOCX/XLSX selektiert -> Text im Clipboard
+- [ ] `Alt+Ctrl+Y` -> Tray-Balloon mit Ollama-Erklaerung (oder Google-Fallback)
 - [ ] `Ctrl+^` (bzw. `Ctrl+F12`) -> Fenster werden gekachelt
 - [ ] Reboot -> AHK startet automatisch (Startup-Shortcut)
+
+Hover-Explain ENV (optional, fuer `Alt+Ctrl+Y`):
+- `ZF_OLLAMA_URL`   (Default `http://localhost:11434`)
+- `ZF_OLLAMA_MODEL` (Default `llama3.2:3b`)
+In PowerShell setzen: `setx ZF_OLLAMA_MODEL "hermes3:8b"` (neue Shell zum Aktivieren).
 
 Hotkey-Mapping (Kurz):
 
@@ -141,6 +148,7 @@ Grenzen:
 - [x] Phase 2 — Mail-Ingest (CF Worker → Bot), Google Tasks/Calendar Sync, Cloudflare Tunnel
 - [x] Phase 3 — Watchdog, Cost-Limits-Howto, QUICKSTART, MIGRATION, README/PROGRESS final
 - [x] Phase 4 — ZF Global Hotkeys (AHK v2, Installer, Dedup-Helper)
+- [x] Phase 5 — Content-Extractor (PDF/DOCX/XLSX/PPTX) + Ollama-Hover-Explain
 
 ### Cheatsheet + Doku
 - [x] `setup/cheatsheet.md` aus Wallpaper-Cards gefuellt + Tutorial-Sektionen (Ollama, VS Code)
@@ -156,7 +164,6 @@ Grenzen:
 - [ ] Cost-Limits aktiviert — siehe [`4-integration/cost-limits.md`](4-integration/cost-limits.md)
 - [ ] Multi-Desktop Setup (Win+Strg+D)
 - [ ] Asana mit Bot verbinden
-- [ ] Phase 5: Ollama-Hover-Explain, PDF/DOCX-Text-Extraktion fuer `Alt+Ctrl+A`
 
 ---
 
@@ -182,4 +189,6 @@ Grenzen:
 - `595f70b` kickstart.ps1 (one-shot PC bootstrap)
 - `45f3c32` zf-all.ps1 (single-script Windows bootstrap)
 - `6d11d43` analyze.ps1 (read-only Inventory)
-- `<next>`  Phase 4: ZF Global Hotkeys (AHK v2 + Installer + Dedup-Helper)
+- `d299929` Phase 4: ZF Global Hotkeys (AHK v2 + Installer + Dedup-Helper)
+- `f008127` Fix: dedup-Pipeline-Scope + MessageBox-Lade-Reihenfolge + AHK Windows()
+- `<next>`  Phase 5: extract-content.ps1 (PDF/DOCX/XLSX/PPTX) + hover-explain.ps1 (Ollama)

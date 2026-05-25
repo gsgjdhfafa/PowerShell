@@ -2,8 +2,8 @@
 <#
 Installs the ZF global hotkey system:
   1. Ensures AutoHotkey v2 is installed (via winget).
-  2. Copies zf-hotkeys.ahk + dedup-and-version.ps1 to
-     C:\Users\Admin\Documents\zf-hotkeys\
+  2. Copies zf-hotkeys.ahk + alle Helper-Skripte (dedup, extract-content,
+     hover-explain) nach C:\Users\Admin\Documents\zf-hotkeys\
   3. Drops a Startup-folder shortcut so AHK auto-starts at login.
   4. Launches the script immediately.
 
@@ -15,16 +15,20 @@ $ErrorActionPreference = 'Stop'
 
 $scriptDir = Split-Path -Parent $MyInvocation.MyCommand.Path
 $targetDir = Join-Path $env:USERPROFILE 'Documents\zf-hotkeys'
-$ahkSrc    = Join-Path $scriptDir 'zf-hotkeys.ahk'
-$psSrc     = Join-Path $scriptDir 'dedup-and-version.ps1'
-$ahkDest   = Join-Path $targetDir 'zf-hotkeys.ahk'
-$psDest    = Join-Path $targetDir 'dedup-and-version.ps1'
 
-foreach ($src in @($ahkSrc, $psSrc)) {
-    if (-not (Test-Path -LiteralPath $src)) {
-        throw "Quelle fehlt: $src"
+# Skripte, die mit-installiert werden (Quelle -> nur Dateiname, Ziel ist $targetDir)
+$payload = @(
+    'zf-hotkeys.ahk'
+    'dedup-and-version.ps1'
+    'extract-content.ps1'
+    'hover-explain.ps1'
+)
+foreach ($name in $payload) {
+    if (-not (Test-Path -LiteralPath (Join-Path $scriptDir $name))) {
+        throw "Quelle fehlt: $name"
     }
 }
+$ahkDest = Join-Path $targetDir 'zf-hotkeys.ahk'
 
 # 1) AutoHotkey v2 installieren falls noch nicht da
 $ahkExe = @(
@@ -50,8 +54,9 @@ Write-Host "[install-hotkeys] AutoHotkey: $ahkExe"
 if (-not (Test-Path -LiteralPath $targetDir)) {
     New-Item -ItemType Directory -Path $targetDir -Force | Out-Null
 }
-Copy-Item -LiteralPath $ahkSrc -Destination $ahkDest -Force
-Copy-Item -LiteralPath $psSrc  -Destination $psDest  -Force
+foreach ($name in $payload) {
+    Copy-Item -LiteralPath (Join-Path $scriptDir $name) -Destination (Join-Path $targetDir $name) -Force
+}
 Write-Host "[install-hotkeys] Skripte kopiert nach: $targetDir"
 
 # 3) Startup-Shortcut anlegen

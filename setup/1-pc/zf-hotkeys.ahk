@@ -75,8 +75,7 @@ ContentToClip() {
         SetTimer(() => ToolTip(), -2500)
         return
     }
-    cmd := '$p=''' p ''';if(Test-Path -LiteralPath $p){Set-Clipboard -Value (Get-Content -Raw -LiteralPath $p)}'
-    Run('powershell -NoProfile -WindowStyle Hidden -Command "' cmd '"', , "Hide")
+    Run('powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "' A_ScriptDir '\extract-content.ps1" "' p '"', , "Hide")
 }
 
 SaveToSOT() {
@@ -101,9 +100,14 @@ HoverExplain() {
     try cls := WinGetClass("ahk_id " winId)
     txt := "Fenster: " title "`nKlasse: " cls "`nKontrolle: " ctlName "`nPos: " mx "," my
     ToolTip(txt, mx + 16, my + 16)
-    SetTimer(() => ToolTip(), -6000)
-    if (cls != "")
-        Run('https://www.google.com/search?q=' . cls . '+windows+control')
+    SetTimer(() => ToolTip(), -4000)
+    ; Ollama-Hintergrund-Erklaerung (BalloonTip im Tray, Google-Fallback)
+    ; argv-safe: in title/cls/ctl liegende " werden zu \" (Windows argv-Parsing)
+    safeT := StrReplace(title,   '"', '\"')
+    safeC := StrReplace(cls,     '"', '\"')
+    safeK := StrReplace(ctlName, '"', '\"')
+    args  := ' -Title "' safeT '" -Class "' safeC '" -Control "' safeK '"'
+    Run('powershell -NoProfile -ExecutionPolicy Bypass -WindowStyle Hidden -File "' A_ScriptDir '\hover-explain.ps1"' args, , "Hide")
 }
 
 TileAllWindows() {
