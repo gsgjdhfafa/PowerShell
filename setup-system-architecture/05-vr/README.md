@@ -6,6 +6,8 @@ Rolle: zusaetzlicher Cloud-Client. **Kein Backend-Change**, kein Bot-Change.
 Telegram + Notion + Google laufen als Android-Apps bzw. im PICO Browser.
 Der bestehende `TELEGRAM_ALLOWED_USER_ID`-Lock greift automatisch — selbe User-ID, neues Geraet.
 
+Hintergrund / Profil-Match / Anti-Hype-Liste: siehe [USE-CASES.md](./USE-CASES.md).
+
 ---
 
 ## Provisionierung (einmalig, auf dem Headset)
