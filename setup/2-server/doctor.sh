@@ -1,0 +1,127 @@
+#!/usr/bin/env bash
+# Server Health-Check. Read-only. Idempotent.
+# Aufruf:  bash setup/2-server/doctor.sh
+set -uo pipefail
+
+APP_USER="${APP_USER:-ops}"
+APP_DIR="${APP_DIR:-/home/$APP_USER/app}"
+RC=0
+
+ok()   { printf "  [ok]   %s\n" "$*"; }
+warn() { printf "  [WARN] %s\n" "$*"; RC=1; }
+fail() { printf "  [FAIL] %s\n" "$*"; RC=2; }
+
+section() { printf "\n== %s ==\n" "$*"; }
+
+section 'system'
+command -v docker  >/dev/null 2>&1 && ok "docker $(docker --version | awk '{print $3}' | tr -d ,)" || fail 'docker fehlt'
+docker compose version >/dev/null 2>&1 && ok "docker compose $(docker compose version --short)" || fail 'compose plugin fehlt'
+command -v node    >/dev/null 2>&1 && ok "node $(node -v)" || warn 'node fehlt'
+command -v git     >/dev/null 2>&1 && ok "git $(git --version | awk '{print $3}')" || warn 'git fehlt'
+
+section 'security'
+systemctl is-active --quiet ufw      && ok 'ufw aktiv'      || warn 'ufw inaktiv'
+systemctl is-active --quiet fail2ban && ok 'fail2ban aktiv' || warn 'fail2ban inaktiv'
+ssh_root=$(sshd -T 2>/dev/null | awk '/^permitrootlogin/{print $2}')
+[ "$ssh_root" = 'no' ] && ok 'ssh root login: no' || warn "ssh root login: ${ssh_root:-?}"
+ssh_pw=$(sshd -T 2>/dev/null | awk '/^passwordauthentication/{print $2}')
+[ "$ssh_pw" = 'no' ] && ok 'ssh password auth: no' || warn "ssh password auth: ${ssh_pw:-?}"
+
+section 'app'
+if [ -d "$APP_DIR/.git" ]; then
+    ok "repo: $APP_DIR ($(git -C "$APP_DIR" rev-parse --short HEAD) on $(git -C "$APP_DIR" rev-parse --abbrev-ref HEAD))"
+else
+    warn "kein git-repo unter $APP_DIR"
+fi
+
+env_file="$APP_DIR/setup/3-bot/.env"
+if [ -f "$env_file" ]; then
+    ok ".env vorhanden"
+    for k in TELEGRAM_BOT_TOKEN NOTION_TOKEN NOTION_DB_MEMORY NOTION_DB_TASKS NOTION_DB_COSTS; do
+        grep -qE "^${k}=.+" "$env_file" && ok "  $k gesetzt" || warn "  $k leer/fehlt"
+    done
+    grep -qE '^(OPENAI_API_KEY|ANTHROPIC_API_KEY)=.+' "$env_file" \
+        && ok '  AI-Key gesetzt' || warn '  weder OPENAI_API_KEY noch ANTHROPIC_API_KEY gesetzt'
+else
+    warn ".env fehlt: $env_file"
+fi
+
+section 'container'
+if docker ps --format '{{.Names}}' | grep -qx 'zf-bot'; then
+    ok 'zf-bot laeuft'
+    rs=$(docker inspect -f '{{.RestartCount}}' zf-bot 2>/dev/null || echo '?')
+    health=$(docker inspect -f '{{.State.Health.Status}}' zf-bot 2>/dev/null || echo 'n/a')
+    state=$(docker inspect -f '{{.State.Status}}' zf-bot 2>/dev/null || echo '?')
+    ok "  state=$state health=$health restarts=$rs"
+    echo '  letzte logs:'
+    docker logs --tail=5 zf-bot 2>&1 | sed 's/^/    /'
+else
+    fail 'zf-bot Container nicht gefunden'
+fi
+
+section 'webhook'
+if docker exec zf-bot wget -qO- --timeout=3 http://127.0.0.1:8080/healthz 2>/dev/null | grep -q '"ok":true'; then
+    ok '/healthz ok'
+else
+    warn '/healthz nicht erreichbar oder kein ok:true'
+fi
+
+section 'tunnel'
+if docker ps --format '{{.Names}}' | grep -qx 'zf-tunnel'; then
+    ok 'zf-tunnel laeuft'
+    docker logs --tail=3 zf-tunnel 2>&1 | sed 's/^/    /'
+else
+    warn 'zf-tunnel Container nicht aktiv (Mail-Ingest deaktiviert)'
+fi
+
+section 'google'
+if [ -f "$env_file" ] && grep -qE '^GOOGLE_REFRESH_TOKEN=.+' "$env_file"; then
+    cid=$(grep -E '^GOOGLE_CLIENT_ID='     "$env_file" | head -n1 | cut -d= -f2-)
+    csec=$(grep -E '^GOOGLE_CLIENT_SECRET=' "$env_file" | head -n1 | cut -d= -f2-)
+    rtok=$(grep -E '^GOOGLE_REFRESH_TOKEN=' "$env_file" | head -n1 | cut -d= -f2-)
+    code=$(curl -s -o /dev/null -w '%{http_code}' \
+        --data-urlencode "client_id=$cid" \
+        --data-urlencode "client_secret=$csec" \
+        --data-urlencode "refresh_token=$rtok" \
+        --data-urlencode 'grant_type=refresh_token' \
+        https://oauth2.googleapis.com/token || echo '000')
+    [ "$code" = '200' ] && ok 'google token: ok' || warn "google token: http $code"
+else
+    warn 'google nicht konfiguriert (kein GOOGLE_REFRESH_TOKEN)'
+fi
+
+section 'provider-reachability'
+# Anthropic: Antwort 400/401 = Server lebt; nur Timeout/000 = fail.
+ac=$(curl -s -o /dev/null -m 5 -w '%{http_code}' https://api.anthropic.com/v1/messages -X POST -H 'content-type: application/json' --data '{}' || echo '000')
+case "$ac" in 000|5*) warn "anthropic: $ac";; *) ok "anthropic: $ac";; esac
+oc=$(curl -s -o /dev/null -m 5 -w '%{http_code}' https://api.openai.com/v1/models || echo '000')
+case "$oc" in 000|5*) warn "openai: $oc";; *) ok "openai: $oc";; esac
+if curl -s -o /dev/null -m 3 http://127.0.0.1:11434/api/tags; then
+    ok 'ollama lokal: erreichbar'
+else
+    : # ollama nicht installiert auf VPS (normal)
+fi
+
+section 'watchdog'
+if crontab -u "$APP_USER" -l 2>/dev/null | grep -qF 'watchdog.sh'; then
+    ok 'cron-eintrag aktiv'
+    if [ -f /var/log/zf-watchdog.log ]; then
+        last=$(tail -n1 /var/log/zf-watchdog.log 2>/dev/null || echo '?')
+        ok "  letzter run: $last"
+    fi
+else
+    warn 'kein cron-eintrag fuer watchdog (install-watchdog.sh laufen lassen)'
+fi
+
+section 'resources'
+df -h / | awk 'NR==2{printf "  disk /: %s used of %s (%s)\n", $3, $2, $5}'
+free -h | awk '/Mem:/{printf "  mem   : %s used of %s\n", $3, $2}'
+uptime  | awk -F'load average:' '{printf "  load  :%s\n", $2}'
+
+echo
+case $RC in
+    0) echo '[done] alles gruen.' ;;
+    1) echo '[done] mit warnungen.' ;;
+    *) echo '[done] kritische probleme.' ;;
+esac
+exit $RC
