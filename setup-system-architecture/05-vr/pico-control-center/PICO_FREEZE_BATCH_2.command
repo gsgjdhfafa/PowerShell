@@ -4,9 +4,12 @@
 # ============================================================
 #  Nutzung: Doppelklick im Finder, oder im Terminal:
 #     bash ~/Desktop/PICO_FREEZE_BATCH_2.command
+#     bash ~/Desktop/PICO_FREEZE_BATCH_2.command -y   (ohne Rueckfrage)
 #  Reversibel: pm disable-user, KEINE Deinstallation.
 #  Rueckgaengig jederzeit: PICO_CONTROL_CENTER.py -> Punkt 13.
 # ============================================================
+AUTO_YES=0
+case "${1:-}" in -y|--yes) AUTO_YES=1 ;; esac
 echo "============================================================"
 echo "  PICO FREEZE BATCH 2"
 echo "============================================================"
@@ -32,11 +35,15 @@ echo
 echo "NICHT dabei (bewusst behalten): de.gerrit.placebook, com.termux,"
 echo "com.x8bit.bitwarden, org.kde.kdeconnect_tp, YouTube VR, com.Dejevis.iLauncher (gesperrt)."
 echo
-read -r -p "Tippe JA zum Bestaetigen: " OK
-if [ "$OK" != "JA" ]; then
-  echo "Abgebrochen. Nichts veraendert."
-  read -r -p "[Enter] zum Schliessen "
-  exit 0
+if [ "$AUTO_YES" -eq 1 ]; then
+  echo "(-y gesetzt: keine Rueckfrage)"
+else
+  read -r -p "Tippe JA zum Bestaetigen: " OK
+  if [ "$OK" != "JA" ]; then
+    echo "Abgebrochen. Nichts veraendert."
+    read -r -p "[Enter] zum Schliessen "
+    exit 0
+  fi
 fi
 
 mkdir -p "$HOME/PicoSetup/99_REPORTS_LOGS"
