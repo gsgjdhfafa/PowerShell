@@ -59,7 +59,9 @@ ALLPKGS=$(printf '%s\n%s\n' "$USERPKGS" "$SYSPKGS" | sort -u)
 
 # --- Kritisch = nie anfassen (Brick-Schutz) ---------------------
 is_critical () {
-  case "$1" in
+  local pkg_lc
+  pkg_lc=$(printf '%s' "$1" | tr '[:upper:]' '[:lower:]')
+  case "$pkg_lc" in
     *launcher*|*systemui*|com.android.*|com.pico*|com.pvr*|com.picovr*|*vrshell*| \
     com.qualcomm*|*inputmethod*|com.google.android.gms|com.google.android.gsf| \
     com.google.android.gsm|*telephony*|*packageinstaller*|com.android.vending| \
