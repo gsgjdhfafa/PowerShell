@@ -22,7 +22,10 @@ function authorized(msg) {
 }
 
 async function handle(msg, hint) {
-    if (!authorized(msg)) return;
+    if (!authorized(msg)) {
+        console.log(`[bot] blockiert: Absender-ID ${msg.from.id} != TELEGRAM_ALLOWED_USER_ID (${ALLOWED})`);
+        return;
+    }
     const chatId = msg.chat.id;
     const text   = (msg.text || '').replace(/^\/\w+\s*/, '').trim();
     if (!text) {

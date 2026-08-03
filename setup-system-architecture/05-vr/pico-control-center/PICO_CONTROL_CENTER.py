@@ -41,6 +41,14 @@ CRITICAL = ("launcher","systemui","com.android.","com.pico","com.pvr","com.picov
             "telephony","packageinstaller","com.android.vending","provider","com.oplus",
             "com.bytedance.picovr","setup","keyguard","com.pico4")
 
+# Unser kuratiertes Ziel-Setup (siehe DEPLOY_PICO.py / PICO_WINDOWS.ps1 etc.):
+TARGETS = {
+    "org.telegram.messenger": "Telegram (Voice -> Bot -> Notion)",
+    "com.brave.browser":      "Brave (Dashboards/Bookmarks)",
+    "org.videolan.vlc":       "VLC (Medien)",
+    "com.igalia.wolvic":      "Wolvic (XR-Browser)",
+}
+
 def ok(m):   print(f"  [OK]  {m}")
 def warn(m): print(f"  [!]   {m}")
 def bad(m):  print(f"  [X]   {m}")
@@ -196,6 +204,47 @@ def act_inventory(adb):
     print(f"\n--- Inventar: {len(ua)} User-Apps, {len(sa)} System-Apps ---")
     ok(f"Voll-Report gespeichert: {rep}")
     info("Diesen Report kannst du mir in den Chat einfuegen - dann empfehle ich sicheres Aufraeumen.")
+
+def act_audit(adb):
+    print("\n--- AUDIT: was laeuft, was muss weg, was muss drauf? ---")
+    if not need_device(adb): return
+    _, u = run([adb,"shell","pm","list","packages","-3"])
+    user_pkgs = sorted(l.replace("package:","").strip() for l in u.splitlines() if l.strip())
+    _, s = run([adb,"shell","pm","list","packages","-s"])
+    sys_pkgs = sorted(l.replace("package:","").strip() for l in s.splitlines() if l.strip())
+    all_pkgs = set(user_pkgs) | set(sys_pkgs)
+
+    missing_targets = [p for p in TARGETS if p not in all_pkgs]
+    present_targets  = [p for p in TARGETS if p in all_pkgs]
+    candidates = [p for p in user_pkgs if p not in TARGETS and not is_critical(p)]
+    crit       = sorted(p for p in all_pkgs if is_critical(p))
+    sys_other  = sorted(p for p in sys_pkgs if not is_critical(p))
+
+    lines = [f"AUDIT {stamp()}"]
+    def sec(t): lines.append(""); lines.append("="*60); lines.append(t); lines.append("="*60)
+
+    print(f"\n[1] ZIEL-APPS - {len(present_targets)}/{len(TARGETS)} vorhanden")
+    sec(f"ZIEL-APPS - {len(present_targets)}/{len(TARGETS)} vorhanden")
+    for p, name in TARGETS.items():
+        line = f"  [{'OK' if p in all_pkgs else 'X '}] {name:32s} ({p})"
+        print(line); lines.append(line)
+
+    print(f"\n[2] KANDIDATEN ZUM EINFRIEREN - {len(candidates)} App(s)")
+    info("Von dir installiert, nicht Teil unseres Setups. Ueber Punkt 12 einfrierbar.")
+    sec(f"KANDIDATEN ZUM EINFRIEREN ({len(candidates)})")
+    for p in candidates: print(f"    - {p}"); lines.append(f"  - {p}")
+    if not candidates: print("    (keine)")
+
+    print(f"\n[3] GESPERRT/KRITISCH - {len(crit)} System-Pakete (bleiben)")
+    sec(f"GESPERRT/KRITISCH ({len(crit)})"); lines += [f"  - {p}" for p in crit]
+    sec(f"SONSTIGE SYSTEM-APPS ({len(sys_other)})"); lines += [f"  - {p}" for p in sys_other]
+
+    LOGS.mkdir(parents=True, exist_ok=True)
+    rep = LOGS / f"audit_{stamp()}.txt"; rep.write_text("\n".join(lines), encoding="utf-8")
+    ok(f"Report: {rep}")
+    if missing_targets: warn(f"Fehlt: {', '.join(TARGETS[p] for p in missing_targets)} -> PICO_WINDOWS.ps1 erneut.")
+    if candidates: warn(f"{len(candidates)} Kandidat(en) zum Einfrieren -> Punkt 12.")
+    if not missing_targets and not candidates: ok("Sauber: alles da, nichts Fremdes.")
 
 def act_install_apk(adb):
     if not need_device(adb): return
@@ -388,6 +437,7 @@ MENU = """
    9) VOLL-INVENTAR (System+User+Speicher) -> Report
   10) APK installieren (APPS_TO_TEST)
   11) App-APK sichern -> Backup
+  19) AUDIT: was laeuft / was weg / was fehlt (Ziel-Apps-Abgleich)
 
   MODIFIKATION (umkehrbar, nichts wird geloescht)
   12) App EINFRIEREN (disable-user)
@@ -424,6 +474,7 @@ def main():
         elif c=="9": act_inventory(adb)
         elif c=="10": act_install_apk(adb)
         elif c=="11": act_backup_apk(adb)
+        elif c=="19": act_audit(adb)
         elif c=="12": act_freeze(adb)
         elif c=="13": act_unfreeze(adb)
         elif c=="14": act_push_media(adb)
