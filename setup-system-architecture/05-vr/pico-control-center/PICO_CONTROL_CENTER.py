@@ -228,11 +228,18 @@ def act_space_setup(adb):
 def act_audit(adb):
     print("\n--- AUDIT: was laeuft, was muss weg, was muss drauf? ---")
     if not need_device(adb): return
-    _, u = run([adb,"shell","pm","list","packages","-3"])
+    # -e = nur aktive (enabled), -d = nur eingefrorene (disabled).
+    # "pm list packages -3" ohne -e/-d zeigt AUCH eingefrorene Apps -
+    # die verschwinden durch Einfrieren nicht aus der Liste, nur aus dem Betrieb.
+    _, u_all = run([adb,"shell","pm","list","packages","-3"])
+    user_pkgs_all = sorted(l.replace("package:","").strip() for l in u_all.splitlines() if l.strip())
+    _, u = run([adb,"shell","pm","list","packages","-3","-e"])
     user_pkgs = sorted(l.replace("package:","").strip() for l in u.splitlines() if l.strip())
+    _, u_d = run([adb,"shell","pm","list","packages","-3","-d"])
+    user_pkgs_frozen = sorted(l.replace("package:","").strip() for l in u_d.splitlines() if l.strip())
     _, s = run([adb,"shell","pm","list","packages","-s"])
     sys_pkgs = sorted(l.replace("package:","").strip() for l in s.splitlines() if l.strip())
-    all_pkgs = set(user_pkgs) | set(sys_pkgs)
+    all_pkgs = set(user_pkgs_all) | set(sys_pkgs)
 
     missing_targets = [p for p in TARGETS if p not in all_pkgs]
     present_targets  = [p for p in TARGETS if p in all_pkgs]
@@ -255,7 +262,12 @@ def act_audit(adb):
     for p in candidates: print(f"    - {p}"); lines.append(f"  - {p}")
     if not candidates: print("    (keine)")
 
-    print(f"\n[3] GESPERRT/KRITISCH - {len(crit)} System-Pakete (bleiben)")
+    print(f"\n[3] BEREITS EINGEFROREN - {len(user_pkgs_frozen)} App(s)")
+    sec(f"BEREITS EINGEFROREN ({len(user_pkgs_frozen)})")
+    for p in user_pkgs_frozen: print(f"    - {p}"); lines.append(f"  - {p}")
+    if not user_pkgs_frozen: print("    (keine)")
+
+    print(f"\n[4] GESPERRT/KRITISCH - {len(crit)} System-Pakete (bleiben)")
     sec(f"GESPERRT/KRITISCH ({len(crit)})"); lines += [f"  - {p}" for p in crit]
     sec(f"SONSTIGE SYSTEM-APPS ({len(sys_other)})"); lines += [f"  - {p}" for p in sys_other]
 

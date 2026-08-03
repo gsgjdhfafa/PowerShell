@@ -53,9 +53,14 @@ VER=$("$ADB" shell getprop ro.build.version.release | tr -d '\r')
 echo "[OK] $MODEL  Android $VER"
 
 # --- Pakete lesen -----------------------------------------------
-USERPKGS=$("$ADB" shell pm list packages -3 | sed 's/package://' | tr -d '\r' | sort)
+# -e = nur aktive (enabled), -d = nur eingefrorene (disabled).
+# Wichtig: "pm list packages -3" ohne -e/-d zeigt AUCH eingefrorene Apps -
+# die verschwinden durch Einfrieren nicht aus der Liste, nur aus dem Betrieb.
+USERPKGS_ALL=$("$ADB" shell pm list packages -3    | sed 's/package://' | tr -d '\r' | sort)
+USERPKGS=$("$ADB"      shell pm list packages -3 -e | sed 's/package://' | tr -d '\r' | sort)
+USERPKGS_FROZEN=$("$ADB" shell pm list packages -3 -d | sed 's/package://' | tr -d '\r' | sort)
 SYSPKGS=$("$ADB" shell pm list packages -s | sed 's/package://' | tr -d '\r' | sort)
-ALLPKGS=$(printf '%s\n%s\n' "$USERPKGS" "$SYSPKGS" | sort -u)
+ALLPKGS=$(printf '%s\n%s\n' "$USERPKGS_ALL" "$SYSPKGS" | sort -u)
 
 # --- Kritisch = nie anfassen (Brick-Schutz) ---------------------
 is_critical () {
@@ -106,6 +111,15 @@ $USERPKGS
 EOF
 [ "$CANDCOUNT" -eq 0 ] && echo "  (keine - nichts Fremdes gefunden)"
 
+FROZENCOUNT=$(printf '%s\n' "$USERPKGS_FROZEN" | grep -c . || true)
+echo
+echo "--- [3] BEREITS EINGEFROREN (deaktiviert, laeuft nicht) - $FROZENCOUNT App(s) ---"
+if [ "$FROZENCOUNT" -gt 0 ]; then
+  printf '%s\n' "$USERPKGS_FROZEN" | while IFS= read -r p; do [ -n "$p" ] && echo "  - $p"; done
+else
+  echo "  (keine)"
+fi
+
 # --- Report speichern ---------------------------------------------
 STAMP=$(date +%Y-%m-%d_%H-%M-%S)
 REPORT="$LOGS/audit_mac_${STAMP}.txt"
@@ -119,8 +133,11 @@ REPORT="$LOGS/audit_mac_${STAMP}.txt"
   echo "KANDIDATEN ZUM EINFRIEREN ($CANDCOUNT):"
   printf '%s' "$CANDS"
   echo
-  echo "USER-APPS (alle):"
-  echo "$USERPKGS"
+  echo "BEREITS EINGEFROREN ($FROZENCOUNT):"
+  echo "$USERPKGS_FROZEN"
+  echo
+  echo "USER-APPS (alle, aktiv+eingefroren):"
+  echo "$USERPKGS_ALL"
   echo
   echo "SYSTEM-APPS (alle):"
   echo "$SYSPKGS"
