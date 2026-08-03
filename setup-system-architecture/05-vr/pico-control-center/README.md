@@ -14,6 +14,9 @@ VR-Aufloesung wird nicht veraendert. Bildschirm-Setups laufen PC-seitig
 | `START_PICO_CONTROL_CENTER.py` | Einmal-Setup: Ordnerstruktur anlegen, ADB + PICO pruefen, optional scrcpy |
 | `PICO_CONTROL_CENTER.py` | Menue (Modifikationsbasis): Status, WLAN-ADB, Live-Bild, Apps, Inventar, Einfrieren/Auftauen, Medien, Backup, Audit |
 | `PICO_AUDIT.py` | Sofort-Scan (Doppelklick): was laeuft, was ist Kandidat zum Einfrieren, was fehlt vom Ziel-Setup |
+| `PICO_AUDIT_MAC.command` | Gleicher Audit-Scan, reines Bash (kein Python), macOS-Doppelklick |
+| `PICO_FREEZE_BATCH.command` / `PICO_FREEZE_BATCH_2.command` | Bestaetigte Freeze-Kandidaten in einem Rutsch einfrieren (`-y` fuer ohne Rueckfrage) |
+| `PICO_SPACE_SETUP.command` | Shortcut zur Umgebungsaufzeichnung (Raum scannen) - oeffnet Settings in der Brille per ADB |
 | `SYNC_TO_SHARED.py` | Kopiert das PicoSetup-Verzeichnis nach `<shared>\Picco` (nur additiv) |
 
 ## Nutzung
@@ -35,7 +38,8 @@ Benoetigte Tools (portabel, kostenlos) nach `01_TOOLS\` legen:
 11 App-APK sichern    12 App EINFRIEREN   13 App AUFTAUEN
 14 Datei -> PICO      15 Screenshot       16 Video (yt-dlp)
 17 Tools pruefen      18 Kopie -> shared\Picco
-19 AUDIT (was laeuft / weg / fehlt)         0 Beenden
+19 AUDIT (was laeuft / weg / fehlt)
+20 Umgebungsaufzeichnung / Space Setup      0 Beenden
 ```
 
 ## Sicherheit

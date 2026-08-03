@@ -205,6 +205,26 @@ def act_inventory(adb):
     ok(f"Voll-Report gespeichert: {rep}")
     info("Diesen Report kannst du mir in den Chat einfuegen - dann empfehle ich sicheres Aufraeumen.")
 
+def act_space_setup(adb):
+    print("\n--- Umgebungsaufzeichnung (Space Setup / Raum scannen) ---")
+    if not need_device(adb): return
+    info("Das eigentliche Scannen (Wand-/Bodenerkennung) geht NUR im Headset -")
+    info("per Kamera-Tracking, nicht per ADB automatisierbar.")
+    run([adb, "shell", "am", "start", "-a", "android.settings.SETTINGS"])
+    ok("Settings in der Brille geoeffnet.")
+    print("""
+    Naechste Schritte IM HEADSET:
+      1. Einstellungen -> Allgemein -> "Physischer Raum" / "Play Area" /
+         "Space Setup" (Bezeichnung variiert je nach PICO-OS-Version).
+      2. Neuen Raum einrichten -> mit dem Controller die Boden-/Wandgrenze
+         abfahren, bis der Scan abgeschlossen ist.
+      3. Bildschirme/Fenster an Waende pinnen: in MR-faehigen Apps
+         (z.B. PICO Connect fuer virtuelle Monitore) nach dem Scan verfuegbar.
+      4. Objekte "funktionalisieren" (z.B. Papierkorb als Trigger/Anker):
+         im Menu "Mixed Reality" / "Anker" bzw. "Spatial Anchors" - variiert
+         je nach Firmware, aktuell keine ADB-Automatisierung moeglich.
+    """)
+
 def act_audit(adb):
     print("\n--- AUDIT: was laeuft, was muss weg, was muss drauf? ---")
     if not need_device(adb): return
@@ -438,6 +458,7 @@ MENU = """
   10) APK installieren (APPS_TO_TEST)
   11) App-APK sichern -> Backup
   19) AUDIT: was laeuft / was weg / was fehlt (Ziel-Apps-Abgleich)
+  20) Umgebungsaufzeichnung / Space Setup (Raum scannen, Anker)
 
   MODIFIKATION (umkehrbar, nichts wird geloescht)
   12) App EINFRIEREN (disable-user)
@@ -475,6 +496,7 @@ def main():
         elif c=="10": act_install_apk(adb)
         elif c=="11": act_backup_apk(adb)
         elif c=="19": act_audit(adb)
+        elif c=="20": act_space_setup(adb)
         elif c=="12": act_freeze(adb)
         elif c=="13": act_unfreeze(adb)
         elif c=="14": act_push_media(adb)
