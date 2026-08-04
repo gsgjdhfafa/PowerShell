@@ -97,7 +97,7 @@ function Install-App {
     else { Write-Host "  [X] $Name: $($out.Trim())" }
 }
 Write-Host "--- Apps installieren ---"
-Install-App 'Telegram' 'org.telegram.messenger' 'https://telegram.org/dl/android/apk'
+Install-App 'Telegram' 'org.telegram.messenger.web' 'https://telegram.org/dl/android/apk'
 Install-App 'VLC'      'org.videolan.vlc'       'https://get.videolan.org/vlc-android/last/VLC-Android-arm64-v8a.apk'
 Install-App 'Brave'    'com.brave.browser'      (Get-GitHubApk 'brave/brave-browser' 'arm64|universal')
 Install-App 'Wolvic'   'com.igalia.wolvic'      (Get-GitHubApk 'Igalia/wolvic' 'arm64|noapi')

@@ -75,7 +75,7 @@ install_url () {
   if "$ADB" install -r "/tmp/$n.apk" >/dev/null 2>&1; then echo "  [OK] $n: installiert"; else echo "  [X] $n: Install-Fehler"; fi
 }
 echo "--- Apps installieren ---"
-install_url Telegram org.telegram.messenger "https://telegram.org/dl/android/apk"
+install_url Telegram org.telegram.messenger.web "https://telegram.org/dl/android/apk"
 install_url VLC org.videolan.vlc "https://get.videolan.org/vlc-android/last/VLC-Android-arm64-v8a.apk"
 install_url Brave  com.brave.browser  "$(gh_url brave/brave-browser 'arm64|universal')"
 install_url Wolvic com.igalia.wolvic  "$(gh_url Igalia/wolvic 'arm64|noapi')"

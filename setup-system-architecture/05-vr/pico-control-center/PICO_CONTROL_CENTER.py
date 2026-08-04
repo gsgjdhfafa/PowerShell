@@ -43,7 +43,7 @@ CRITICAL = ("launcher","systemui","com.android.","com.pico","com.pvr","com.picov
 
 # Unser kuratiertes Ziel-Setup (siehe DEPLOY_PICO.py / PICO_WINDOWS.ps1 etc.):
 TARGETS = {
-    "org.telegram.messenger": "Telegram (Voice -> Bot -> Notion)",
+    "org.telegram.messenger.web": "Telegram (Voice -> Bot -> Notion)",
     "com.brave.browser":      "Brave (Dashboards/Bookmarks)",
     "org.videolan.vlc":       "VLC (Medien)",
     "com.igalia.wolvic":      "Wolvic (XR-Browser)",

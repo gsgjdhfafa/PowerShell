@@ -40,7 +40,7 @@ def stamp(): return datetime.datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
 # --- Kuratierte Apps: an die validierten Use-Cases gekoppelt ---
 CURATED = [
-    {"name":"Telegram", "pkg":"org.telegram.messenger", "why":"Voice-Diktat -> dein Bot -> Notion (validierter #1 Use-Case)",
+    {"name":"Telegram", "pkg":"org.telegram.messenger.web", "why":"Voice-Diktat -> dein Bot -> Notion (validierter #1 Use-Case)",
      "type":"direct", "url":"https://telegram.org/dl/android/apk"},
     {"name":"Brave",    "pkg":"com.brave.browser", "why":"Dashboards: Notion/Gmail/Calendar/Tasks glanceable",
      "type":"github", "repo":"brave/brave-browser", "match":"arm64|universal"},

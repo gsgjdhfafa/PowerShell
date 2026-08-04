@@ -27,7 +27,7 @@ def bad(m):  print(f"  [X]   {m}")
 def info(m): print(f"        {m}")
 
 CURATED = [
-    {"name":"Telegram","pkg":"org.telegram.messenger","why":"Voice-Diktat -> Bot -> Notion",
+    {"name":"Telegram","pkg":"org.telegram.messenger.web","why":"Voice-Diktat -> Bot -> Notion",
      "type":"direct","url":"https://telegram.org/dl/android/apk"},
     {"name":"Brave","pkg":"com.brave.browser","why":"Dashboards Notion/Gmail/Kalender/Tasks",
      "type":"github","repo":"brave/brave-browser","match":"arm64|universal"},

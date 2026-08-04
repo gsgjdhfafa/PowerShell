@@ -96,7 +96,7 @@ def connect(adb):
 
 # --- Apps --------------------------------------------------
 CURATED = [
-    ("Telegram","org.telegram.messenger","direct","https://telegram.org/dl/android/apk","Voice-Diktat -> Bot -> Notion"),
+    ("Telegram","org.telegram.messenger.web","direct","https://telegram.org/dl/android/apk","Voice-Diktat -> Bot -> Notion"),
     ("VLC","org.videolan.vlc","direct","https://get.videolan.org/vlc-android/last/VLC-Android-arm64-v8a.apk","Medien / Fokus-Kino"),
     ("Brave","com.brave.browser","github","brave/brave-browser|arm64|universal","Dashboards Notion/Gmail/Kalender"),
     ("Wolvic","com.igalia.wolvic","github","Igalia/wolvic|arm64|noapi","XR-Browser (optional)"),

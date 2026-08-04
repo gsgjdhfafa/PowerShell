@@ -76,7 +76,7 @@ is_critical () {
 }
 
 # --- Unser kuratiertes Ziel-Setup (parallele Arrays, bash-3-kompatibel) ---
-TARGET_PKGS=(org.telegram.messenger com.brave.browser org.videolan.vlc com.igalia.wolvic)
+TARGET_PKGS=(org.telegram.messenger.web com.brave.browser org.videolan.vlc com.igalia.wolvic)
 TARGET_NAMES=("Telegram (Voice -> Bot -> Notion)" "Brave (Dashboards/Bookmarks)" "VLC (Medien)" "Wolvic (XR-Browser)")
 
 echo
