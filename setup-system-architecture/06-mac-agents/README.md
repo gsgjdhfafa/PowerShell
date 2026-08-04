@@ -21,3 +21,14 @@ Homebrew-KI-Pakete, und sucht nach OpenClaw in den ueblichen Orten.
 
 Ausgabe zurueck in den Chat -> darauf aufbauend werden die
 Start-Icon-Ordner und Memory-Pfad-Shortcuts gebaut.
+
+## Zweiter Schritt (nach dem Scan)
+
+```bash
+curl -fsSL -o ~/Desktop/BUILD_AGENT_DESKTOP.command "https://raw.githubusercontent.com/gsgjdhfafa/PowerShell/claude/setup-system-architecture-XKISu/setup-system-architecture/06-mac-agents/BUILD_AGENT_DESKTOP.command" && chmod +x ~/Desktop/BUILD_AGENT_DESKTOP.command && bash ~/Desktop/BUILD_AGENT_DESKTOP.command
+```
+
+Baut `~/Desktop/AGENTS/` mit Start-Icons pro Ollama-Modell (inkl.
+RAM-Einschaetzung fuers jeweilige Geraet), OpenClaw-Shortcuts zu den
+5 Kern-Dateien, und Symlinks zu den Daten-/Zustandsordnern. Reine
+Skripte/Symlinks - keine Kopien, nichts an den echten Daten geaendert.
