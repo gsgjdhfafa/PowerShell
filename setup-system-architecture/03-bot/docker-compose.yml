@@ -1,0 +1,14 @@
+services:
+  bot:
+    build:
+      context: ..
+      dockerfile: 03-bot/Dockerfile
+    container_name: ai-bridge-bot
+    restart: unless-stopped
+    env_file:
+      - .env
+    logging:
+      driver: json-file
+      options:
+        max-size: "5m"
+        max-file: "3"

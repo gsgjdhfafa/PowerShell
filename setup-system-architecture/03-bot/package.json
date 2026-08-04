@@ -1,0 +1,17 @@
+{
+  "name": "telegram-ai-bridge",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "main": "bot.js",
+  "scripts": {
+    "start": "node bot.js"
+  },
+  "dependencies": {
+    "@anthropic-ai/sdk": "^0.30.0",
+    "@notionhq/client": "^2.2.15",
+    "dotenv": "^16.4.5",
+    "node-telegram-bot-api": "^0.66.0",
+    "openai": "^4.60.0"
+  }
+}
