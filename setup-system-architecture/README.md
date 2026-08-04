@@ -17,6 +17,7 @@ Telegram -> VPS (Node.js Bot) -> KI (OpenAI/Claude) -> Notion -> Telegram
 03-bot/          Telegram Bot (Node.js, dockerized)
 04-integration/  OpenAI + Claude + Notion Module
 05-vr/           PICO 4 Ultra Geraete-Checkliste (Cloud-Client, kein Backend-Change)
+06-mac-agents/   Lokale KI-Agenten/Modelle auf dem Mac - Discovery-Scan
 ```
 
 ## Reihenfolge
