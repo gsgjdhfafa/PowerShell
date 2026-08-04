@@ -84,8 +84,8 @@ function Get-GitHubApk {
 }
 function Install-App {
     param($Name, $Pkg, $Url)
-    $have = (& $Adb shell pm list packages $Pkg) -join ''
-    if ($have -match [regex]::Escape("package:$Pkg")) { Write-Host "  [OK] $Name: schon installiert"; return }
+    $have = (& $Adb shell pm list packages $Pkg) | ForEach-Object { $_.Trim() }
+    if ($have -contains "package:$Pkg") { Write-Host "  [OK] $Name: schon installiert"; return }
     if (-not $Url) { Write-Host "  [!] $Name: keine URL gefunden"; return }
     $apk = Join-Path $ApkTmp "$Name.apk"
     try {

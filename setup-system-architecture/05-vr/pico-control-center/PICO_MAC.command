@@ -50,7 +50,7 @@ gh_url () { # $1=repo  $2=regex
 }
 install_url () { # $1=name $2=pkg $3=url
   local n="$1" p="$2" u="$3"
-  if "$ADB" shell pm list packages "$p" 2>/dev/null | grep -q "$p"; then echo "  [OK] $n: schon installiert"; return; fi
+  if "$ADB" shell pm list packages "$p" 2>/dev/null | tr -d '\r' | grep -qx "package:$p"; then echo "  [OK] $n: schon installiert"; return; fi
   [ -z "$u" ] && { echo "  [!] $n: keine URL gefunden"; return; }
   echo "  [*] Lade $n ..."
   curl -sL "$u" -o "/tmp/$n.apk" || { echo "  [X] $n: Download-Fehler"; return; }

@@ -68,7 +68,7 @@ gh_url () {
 }
 install_url () {
   local n="$1" p="$2" u="$3"
-  if "$ADB" shell pm list packages "$p" 2>/dev/null | grep -q "$p"; then echo "  [OK] $n: schon da"; return; fi
+  if "$ADB" shell pm list packages "$p" 2>/dev/null | tr -d '\r' | grep -qx "package:$p"; then echo "  [OK] $n: schon da"; return; fi
   [ -z "$u" ] && { echo "  [!] $n: keine URL"; return; }
   echo "  [*] Lade $n ..."
   curl -sL "$u" -o "/tmp/$n.apk" || { echo "  [X] $n: Download-Fehler"; return; }

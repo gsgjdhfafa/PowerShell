@@ -117,7 +117,8 @@ def gh_url(spec):
 
 def install(adb, name, pkg, kind, spec, why):
     _, have = run([adb,"shell","pm","list","packages",pkg])
-    if f"package:{pkg}" in have: ok(f"{name}: schon da"); return
+    have_lines = [l.strip() for l in have.splitlines()]
+    if f"package:{pkg}" in have_lines: ok(f"{name}: schon da"); return
     url = spec if kind == "direct" else gh_url(spec)
     if not url: warn(f"{name}: keine URL"); return
     apk = APK / f"{name}.apk"
